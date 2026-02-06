@@ -1,0 +1,20 @@
+{
+  "name": "گیت لند",
+  "version": "2.3.1",
+  "description": "درگاه پرداخت جامع، ایمن و هوشمند وردپرس برای تمامی درگاه های پرداخت با قابلیت اتصال به همه افزونه های وردپرس",
+  "scripts": {
+    "dev": "postcss dev_assets/css/index.css -o dev_assets/css/style.css --watch"
+  },
+  "author": {
+    "name": "nabik",
+    "url": "https://nabik.net"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "postcss-prefix-selector": "^2.1.1",
+    "tailwindcss": "^3.4.4"
+  }
+}

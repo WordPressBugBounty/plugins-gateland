@@ -174,7 +174,7 @@ class SamanGateway extends BaseGateway implements \Nabik\Gateland\Gateways\Featu
 	public function options(): array {
 		return [
 			[
-				'label' => 'شناسه ترمینال',
+				'label' => 'شماره ترمینال (MID)',
 				'key'   => 'terminal_id',
 			],
 			[

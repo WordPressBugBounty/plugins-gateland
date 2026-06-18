@@ -8,17 +8,17 @@ use Nabik\Gateland\Services\GatewayService;
 
 defined( 'ABSPATH' ) || exit;
 
-wp_enqueue_style('custom-style', GATELAND_URL . 'dev_assets/css/style.css', [], GATELAND_VERSION);
-wp_enqueue_style('notyf-style', GATELAND_URL . 'dev_assets/css/notyf.min.css', [], GATELAND_VERSION);
-wp_enqueue_style( 'persian-datepicker-style', GATELAND_URL . 'dev_assets/css/persian-datepicker.min.css', [], GATELAND_VERSION );
+wp_enqueue_style('custom-style', GATELAND_URL . 'assets/css/style.css', [], GATELAND_VERSION);
+wp_enqueue_style('notyf-style', GATELAND_URL . 'assets/css/notyf.min.css', [], GATELAND_VERSION);
+wp_enqueue_style( 'persian-datepicker-style', GATELAND_URL . 'assets/css/persian-datepicker.min.css', [], GATELAND_VERSION );
 
-wp_enqueue_script( 'persian-datepicker-script', GATELAND_URL . 'dev_assets/js/persian-datepicker.min.js', ['jquery'], GATELAND_VERSION, true );
-wp_enqueue_script( 'persian-date-script', GATELAND_URL . 'dev_assets/js/persian-date.min.js', ['jquery'], GATELAND_VERSION, true );
+wp_enqueue_script( 'persian-datepicker-script', GATELAND_URL . 'assets/js/persian-datepicker.min.js', ['jquery'], GATELAND_VERSION, true );
+wp_enqueue_script( 'persian-date-script', GATELAND_URL . 'assets/js/persian-date.min.js', ['jquery'], GATELAND_VERSION, true );
 
 wp_enqueue_script( 'alpine' );
-wp_enqueue_script('notyf-script', GATELAND_URL . 'dev_assets/js/notyf.min.js', [], GATELAND_VERSION, true);
-wp_enqueue_script('global-script', GATELAND_URL . 'dev_assets/js/global.js', ['notyf-script', 'persian-date-script'], GATELAND_VERSION, true);
-wp_enqueue_script('page-script', GATELAND_URL . 'dev_assets/js/pages/transactions.js', [], GATELAND_VERSION, true);
+wp_enqueue_script('notyf-script', GATELAND_URL . 'assets/js/notyf.min.js', [], GATELAND_VERSION, true);
+wp_enqueue_script('global-script', GATELAND_URL . 'assets/js/global.js', ['notyf-script', 'persian-date-script'], GATELAND_VERSION, true);
+wp_enqueue_script('page-script', GATELAND_URL . 'assets/js/pages/transactions.js', [], GATELAND_VERSION, true);
 
 wp_localize_script('global-script', 'gateland', [
     'root' => esc_url_raw(rest_url()),
@@ -61,7 +61,7 @@ wp_localize_script('global-script', 'gateland', [
                             @click="modals.advanceSearch.active = true"
                             class="flex items-center gap-2 bg-primary-50 hover:bg-primary-100 rounded-[8px] py-2 px-3.5"
                     >
-                        <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/search.svg">
+                        <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/search.svg">
                         <span class="font-semibold text-primary-700">جستجو پیشرفته </span>
                         <div x-text="getNumberOfAdvancedFilters()" class="size- flex items-center justify-center bg-blue-100 text-blue-700 rounded-full text-xs pt-1 pb-0.5 px-2"></div>
                     </button>
@@ -86,18 +86,25 @@ wp_localize_script('global-script', 'gateland', [
                     <div class="lg:col-span-2 sm:col-span-6 col-span-full">
                         <div>
                             <label class="block text-sm mb-2">شماره تراکنش</label>
-                            <input x-model="tableFilters.transaction_id" type="number" class="w-full bg-white border !border-gray-300 shadow-[0_1px_2px_0_#1018280D] !rounded-lg !py-2 !px-3" placeholder="شماره تراکنش را وارد کنید">
-                            <!--error msg-->
-                            <div class="text-xs text-error-300 pt-1.5 empty:pt-0"></div>
+                            <input
+                                    @keyup.enter="getPageData()"
+                                    x-model="tableFilters.transaction_id"
+                                    type="number"
+                                    class="w-full bg-white border !border-gray-300 shadow-[0_1px_2px_0_#1018280D] !rounded-lg !py-2 !px-3"
+                                    placeholder="شماره تراکنش را وارد کنید"
+                            >
                         </div>
                     </div>
-                    <!-- input has error -->
                     <div class="lg:col-span-2 sm:col-span-6 col-span-full">
                         <div>
                             <label class="block text-sm mb-2">شماره سفارش</label>
-                            <input x-model="tableFilters.order_id" type="number" class="w-full bg-white border !border-gray-300 shadow-[0_1px_2px_0_#1018280D] !rounded-lg !py-2 !px-3" placeholder="شماره سفارش را وارد کنید">
-                            <!--error msg-->
-                            <div class="text-xs text-error-300 pt-1.5 empty:pt-0"></div>
+                            <input
+                                    @keyup.enter="getPageData()"
+                                    x-model="tableFilters.order_id"
+                                    type="number"
+                                    class="w-full bg-white border !border-gray-300 shadow-[0_1px_2px_0_#1018280D] !rounded-lg !py-2 !px-3"
+                                    placeholder="شماره سفارش را وارد کنید"
+                            >
                         </div>
                     </div>
                     <div class="lg:col-span-2 sm:col-span-6 col-span-full">
@@ -109,7 +116,7 @@ wp_localize_script('global-script', 'gateland', [
                                     class="filter-range-date flex items-center border border-gray-300 shadow-[0_1px_2px_0_#1018280D] rounded-lg duration-300 cursor-pointer bg-white hover:bg-primary-50"
                             >
                                 <div class="border-l border-gray-300 min-w-9 p-2">
-                                    <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/calendar.svg">
+                                    <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/calendar.svg">
                                 </div>
                                 <div class="show-value text-sm font-normal  p-2.5">
                                     <template x-if="!tableFilters.from_date && !tableFilters.to_date">
@@ -463,7 +470,7 @@ wp_localize_script('global-script', 'gateland', [
                                                         :href="`?page=gateland-transaction&transaction_id=${row.id}`"
                                                         class="size-7 flex items-center justify-center rounded hover:shadow hover:bg-success-100"
                                                 >
-                                                    <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/eye.svg">
+                                                    <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/eye.svg">
                                                 </a>
                                             </div>
                                         </td>
@@ -482,7 +489,7 @@ wp_localize_script('global-script', 'gateland', [
                     <div class="mb-3">
                         <div class="size-12 flex items-center justify-center bg-primary-50 rounded-full mx-auto">
                             <div class="size-9 flex items-center justify-center bg-primary-100 rounded-full">
-                                <img class="size-5" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/search-blue.svg">
+                                <img class="size-5" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/search-blue.svg">
                             </div>
                         </div>
                     </div>
@@ -513,7 +520,7 @@ wp_localize_script('global-script', 'gateland', [
                             class="sm:size-7 size-6 flex items-center justify-center border border-gray-200 hover:bg-gray-100 rounded-md rotate-180 disabled:opacity-50"
                             :disabled="((pagination.totalPage - (pagination.totalPage - 1)) === pagination.currentPage)"
                     >
-                        <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/perv.svg">
+                        <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/perv.svg">
                     </button>
 
                     <template x-for="(pageNumber, index) in pagination.items">
@@ -539,7 +546,7 @@ wp_localize_script('global-script', 'gateland', [
                             class="sm:size-7 size-6 flex items-center justify-center border border-gray-200 hover:bg-gray-100 rounded-md disabled:opacity-50"
                             :disabled="(pagination.totalPage === pagination.currentPage)"
                     >
-                        <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/perv.svg">
+                        <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/perv.svg">
                     </button>
 
                 </div>
@@ -566,7 +573,7 @@ wp_localize_script('global-script', 'gateland', [
                 <div class="mb-3">
                     <div class="size-12 flex items-center justify-center bg-primary-50 rounded-full">
                         <div class="size-9 flex items-center justify-center bg-primary-100 rounded-full">
-                            <img class="size-5" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/search-blue.svg">
+                            <img class="size-5" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/search-blue.svg">
                         </div>
                     </div>
                 </div>

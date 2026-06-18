@@ -30,7 +30,7 @@ class Block extends AbstractPaymentMethodType {
 
 		wp_register_script(
 			$handle,
-			GATELAND_URL . 'assets/js/wc-payment-block.js',
+			GATELAND_URL . 'assets/js/plugins/woocommerce/wc-payment-block.js',
 			[
 				'wc-blocks-registry',
 				'wc-settings',

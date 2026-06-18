@@ -101,6 +101,7 @@ class GatewayAPI extends RestAPI {
 		self::response( true, null, [
 			'is_pro_active' => class_exists( GatelandPro::class ) && GatelandPro::is_active(),
 			'gateways'      => $gateways,
+			'host_ip'       => GatewayService::get_host_ip(),
 		] );
 	}
 
@@ -166,30 +167,10 @@ class GatewayAPI extends RestAPI {
 	}
 
 	public function index( WP_REST_Request $request ) {
-
-		$gateways = Gateway::query()
-		                   ->orderBy( 'sort' )
-		                   ->get()
-		                   ->map( function ( Gateway $gateway ) {
-
-			                   $builder = $gateway->build();
-
-			                   return [
-				                   'id'          => $gateway->id,
-				                   'name'        => $builder->name(),
-				                   'description' => $builder->description(),
-				                   'url'         => $builder->url(),
-				                   'icon'        => $builder->icon(),
-				                   'sort'        => $gateway->sort,
-				                   'status'      => $gateway->status,
-			                   ];
-		                   } )
-		                   ->toArray();
-
-
 		self::response( true, null, [
 			'is_pro_active' => class_exists( GatelandPro::class ) && GatelandPro::is_active(),
-			'gateways'      => $gateways,
+			'gateways'      => $this->gateways(),
+			'host_ip'       => GatewayService::get_host_ip(),
 		] );
 	}
 
@@ -215,7 +196,9 @@ class GatewayAPI extends RestAPI {
 
 		GatewayService::reset_activated();
 
-		self::response( true, 'درگاه‌ها با موفقیت اولویت‌بندی شدند.' );
+		self::response( true, 'درگاه‌ها با موفقیت اولویت‌بندی شدند.', [
+			'gateways' => $this->gateways(),
+		] );
 	}
 
 	public function change_status( WP_REST_Request $request ) {
@@ -241,7 +224,9 @@ class GatewayAPI extends RestAPI {
 
 		GatewayService::reset_activated();
 
-		self::response( true, 'وضعیت با موفقیت ذخیره شد.' );
+		self::response( true, 'وضعیت با موفقیت ذخیره شد.', [
+			'gateways' => $this->gateways(),
+		] );
 	}
 
 	public function delete( WP_REST_Request $request ) {
@@ -265,7 +250,9 @@ class GatewayAPI extends RestAPI {
 
 		GatewayService::reset_activated();
 
-		self::response( true, 'درگاه با موفقیت حذف شد.' );
+		self::response( true, 'درگاه با موفقیت حذف شد.', [
+			'gateways' => $this->gateways(),
+		] );
 	}
 
 	public function update( WP_REST_Request $request ) {
@@ -340,4 +327,26 @@ class GatewayAPI extends RestAPI {
 			] );
 	}
 
+	public function gateways(): array {
+		return Gateway::query()
+		              ->orderBy( 'sort' )
+		              ->get()
+		              ->map( [ $this, 'resource' ] )
+		              ->toArray();
+	}
+
+	public function resource( Gateway $gateway ): array {
+
+		$builder = $gateway->build();
+
+		return [
+			'id'          => $gateway->id,
+			'name'        => $builder->name(),
+			'description' => $builder->description(),
+			'url'         => $builder->url(),
+			'icon'        => $builder->icon(),
+			'sort'        => $gateway->sort,
+			'status'      => $gateway->status,
+		];
+	}
 }

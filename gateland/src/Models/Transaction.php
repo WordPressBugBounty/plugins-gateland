@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Nabik\Gateland\Enums\Transaction\StatusesEnum;
 use Nabik\Gateland\Gateland;
+use Nabik\Gateland\Helpers\SQID;
 
 /**
  * Class Transaction
@@ -32,6 +33,7 @@ use Nabik\Gateland\Gateland;
  * @property string  $national_code
  * @property string  $gateway_callback
  * @property string  $sign
+ * @property string  $token
  * @property string  $mobile
  * @property int     $user_id
  * @property string  $client
@@ -57,7 +59,6 @@ class Transaction extends Model {
 //		'currency'      => CurrenciesEnum::class,
 //		'status'        => StatusesEnum::class,
 		'allowed_cards' => 'array',
-		'meta'          => 'array',
 		'paid_at'       => 'datetime',
 		'verified_at'   => 'datetime',
 	];
@@ -99,6 +100,7 @@ class Transaction extends Model {
 	public const CLIENT_LP = 'learnpress';
 	public const CLIENT_LD = 'learndash';
 	public const CLIENT_SI = 'sliced_invoices';
+	public const CLIENT_BOOKLY = 'bookly';
 
 	public static function getClients(): array {
 
@@ -116,6 +118,7 @@ class Transaction extends Model {
 			self::CLIENT_LP          => 'لرن‌پرس',
 			self::CLIENT_LD          => 'لرن‌دش',
 			self::CLIENT_SI          => 'Sliced Invoices',
+			self::CLIENT_BOOKLY      => 'بوکلی',
 		] );
 
 	}
@@ -146,12 +149,36 @@ class Transaction extends Model {
 		return $this->gateway->build()->name();
 	}
 
+	public function getMetaAttribute( $value ): array {
+
+		if ( is_null( $value ) ) {
+			return [];
+		}
+
+		return json_decode( $value, true ) ?? [];
+	}
+
+	public function setMetaAttribute( ?array $value ) {
+
+		if ( is_null( $value ) ) {
+			$value = [];
+		}
+
+		$meta = $value + $this->getMetaAttribute( $this->attributes['meta'] ?? null );
+
+		$this->attributes['meta'] = empty( $meta ) ? null : json_encode( $meta );
+	}
+
 	public function getSignAttribute(): string {
 		return substr( sha1( $this->id . AUTH_KEY ), 14, 8 );
 	}
 
+	public function getTokenAttribute(): string {
+		return SQID::encode( $this->id );
+	}
+
 	public function getGatewayCallbackAttribute(): string {
-		return add_query_arg( [ 'sign' => $this->sign ], rest_url( 'gateland/payment/' . $this->id . '/callback' ) );
+		return add_query_arg( [ 'sign' => $this->sign ], rest_url( 'gateland/payment/' . $this->token . '/callback' ) );
 	}
 
 	public function isExpired(): bool {
@@ -167,7 +194,7 @@ class Transaction extends Model {
 	}
 
 	public function isVerified(): bool {
-		return is_null( $this->verified_at );
+		return ! is_null( $this->verified_at );
 	}
 
 	/**
@@ -264,13 +291,13 @@ class Transaction extends Model {
 	}
 
 	public function getPayURL(): string {
-		return rest_url( 'gateland/payment/' . $this->id . '/start' );
+		return rest_url( 'gateland/payment/' . $this->token . '/start' );
 	}
 
 	public function getPrettyPayURL(): string {
 		$prefix = Gateland::get_option( 'sms.pay_link', 'pay' );
 
-		return site_url( $prefix . '/' . $this->id );
+		return site_url( $prefix . '/' . $this->token );
 	}
 
 	// Relations

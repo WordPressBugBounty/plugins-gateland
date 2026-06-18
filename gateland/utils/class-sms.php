@@ -1,17 +1,19 @@
 <?php
 
+namespace Nabik\Utils\V1;
+
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'Nabik_Net_SMS' ) ) {
+if ( ! class_exists( '\Nabik\Utils\V1\SMS' ) ) {
 
 	/**
 	 * Class Nabik_Net_SMS
 	 *
 	 * @author  Nabik
 	 */
-	class Nabik_Net_SMS {
+	class SMS {
 
-		const VERSION = '1.2.1';
+		const VERSION = '1.0.0';
 
 		/**
 		 * @var string|null
@@ -94,7 +96,8 @@ if ( ! class_exists( 'Nabik_Net_SMS' ) ) {
 							<td>
 								<p class="description">
 									<b>ملی پیامک:</b> پنل پیامک حرفه‌ای و پرسرعت را با کد تخفیف
-									۲۰ درصدی <b>nabik20</b> از <a href="https://yun.ir/pwssms" target="_blank">ملی
+									۲۰ درصدی <b>nabik20</b> از <a
+											href="https://l.nabik.net/melipayamak?utm_source=nabik-sms" target="_blank">ملی
 										پیامک</a> تهیه کنید.
 								</p>
 							</td>
@@ -105,12 +108,9 @@ if ( ! class_exists( 'Nabik_Net_SMS' ) ) {
 							</th>
 							<td>
 								<select class="regular" name="nabik_sms[gateway]" id="nabik_sms[gateway]"
-										style="width: 25em">
-									<option value="melipayamak_pattern" <?php selected( self::get_option( 'gateway' ), 'melipayamak_pattern' ); ?>>
-										ملی پیامک - پترن
-									</option>
+								        style="width: 25em">
 									<option value="melipayamak" <?php selected( self::get_option( 'gateway' ), 'melipayamak' ); ?>>
-										ملی پیامک - عادی
+										ملی پیامک
 									</option>
 									<option value="pwoosms" <?php selected( self::get_option( 'gateway' ), 'pwoosms' ); ?>>
 										پیامک حرفه‌ای ووکامرس
@@ -118,11 +118,10 @@ if ( ! class_exists( 'Nabik_Net_SMS' ) ) {
 								</select>
 								<p class="description">
 								<ul>
-									<li>۱. ملی پیامک - عادی: ارسال به صورت متن ساده با قابلیت تعیین شماره ارسال کننده
-										پیامک
+									<li>۱. ملی پیامک: ارسال پیامک به صورت متن عادی یا ارسال سریع به صورت پترن با خط
+										خدماتی عمومی
 									</li>
-									<li>۲. ملی پیامک - پترن: ارسال سریع به صورت پترن با خط خدماتی عمومی</li>
-									<li>۳. پیامک حرفه‌ای ووکامرس: ارسال پیامک با استفاده از درگاه تنظیم شده در
+									<li>۲. پیامک حرفه‌ای ووکامرس: ارسال پیامک با استفاده از درگاه تنظیم شده در
 										<a href="<?php echo esc_url( admin_url( 'plugin-install.php?tab=plugin-information&plugin=persian-woocommerce-sms' ) ); ?>"
 										   target="_blank">Persian Woocommerce SMS</a>
 									</li>
@@ -130,27 +129,28 @@ if ( ! class_exists( 'Nabik_Net_SMS' ) ) {
 								</p>
 							</td>
 						</tr>
-						<tr class="gateway-options melipayamak melipayamak_pattern">
+						<tr class="gateway-options melipayamak">
 							<th scope="row">
 								<label for="nabik_sms[username]">نام کاربری ملی پیامک</label>
 							</th>
 							<td>
 								<input type="text" class="regular-text " id="nabik_sms[username]"
-									   name="nabik_sms[username]"
-									   value="<?php echo esc_attr( self::get_option( 'username' ) ); ?>">
-								<p class="description">نام کاربری پنل پیامک <a href="https://yun.ir/pwssms"
-																			   target="_blank">ملی پیامک</a>
+								       name="nabik_sms[username]"
+								       value="<?php echo esc_attr( self::get_option( 'username' ) ); ?>">
+								<p class="description">نام کاربری پنل پیامک <a
+											href="https://l.nabik.net/melipayamak?utm_source=nabik-sms"
+											target="_blank">ملی پیامک</a>
 								</p>
 							</td>
 						</tr>
-						<tr class="gateway-options melipayamak melipayamak_pattern">
+						<tr class="gateway-options melipayamak">
 							<th scope="row">
 								<label for="nabik_sms[password]">کلمه عبور ملی پیامک</label>
 							</th>
 							<td>
 								<input type="password" class="regular-text" id="nabik_sms[password]"
-									   name="nabik_sms[password]"
-									   value="<?php echo esc_attr( self::get_option( 'password' ) ); ?>">
+								       name="nabik_sms[password]"
+								       value="<?php echo esc_attr( self::get_option( 'password' ) ); ?>">
 								<p class="description">
 									<span style="color: seagreen">
 										<?php
@@ -172,8 +172,10 @@ if ( ! class_exists( 'Nabik_Net_SMS' ) ) {
 							</th>
 							<td>
 								<input type="text" class="regular-text" id="nabik_sms[sender]"
-									   name="nabik_sms[sender]"
-									   value="<?php echo esc_attr( self::get_option( 'sender' ) ); ?>">
+								       name="nabik_sms[sender]"
+								       value="<?php echo esc_attr( self::get_option( 'sender' ) ); ?>">
+								<p class="description">این شماره صرفا برای ارسال پیامک‌های عادی (غیر پترن) کاربرد
+									دارد.</p>
 							</td>
 						</tr>
 						<tr class="gateway-options pwoosms">
@@ -347,24 +349,26 @@ if ( ! class_exists( 'Nabik_Net_SMS' ) ) {
 		}
 
 		public static function get_option( string $key, $default = null ) {
-			return self::$options[ $key ] ?? $default;
+			$value = self::$options[ $key ] ?? $default;
+
+			if ( $key == 'gateway' && $value == 'melipayamak_pattern' ) {
+				return 'melipayamak';
+			}
+
+			return $value;
 		}
 
 		public static function send( string $phone, string $message ): bool {
-
-			$gateways = [
-				'melipayamak',
-				'melipayamak_pattern',
-				'pwoosms',
-			];
 
 			$message = wp_strip_all_tags( $message );
 			$message = str_replace( '&nbsp;', ' ', $message );
 
 			$gateway = self::get_option( 'gateway' );
 
-			if ( in_array( $gateway, $gateways ) && method_exists( self::class, $gateway ) ) {
-				return self::{$gateway}( $phone, $message );
+			if ( $gateway == 'pwoosms' ) {
+				return self::pwoosms( $phone, $message );
+			} elseif ( $gateway == 'melipayamak' ) {
+				return self::melipayamak( $phone, $message );
 			}
 
 			return false;
@@ -374,15 +378,97 @@ if ( ! class_exists( 'Nabik_Net_SMS' ) ) {
 
 			$username = self::get_option( 'username' );
 			$password = self::get_option( 'password' );
-			$sender   = self::get_option( 'sender' );
 
-			if ( empty( $username ) || empty( $password ) || empty( $sender ) ) {
+			if ( empty( $username ) || empty( $password ) ) {
+				return false;
+			}
+
+			$message = trim( $message );
+
+			if ( self::is_pattern( $message ) ) {
+
+				$pattern = self::parse_pattern( $message );
+
+				return self::melipayamak_pattern( $phone, $pattern['code'], $pattern['vars'] );
+			}
+
+			// Backward compatibility with format: PatternCode;Val1;Val2
+			$variables    = explode( ';', $message );
+			$pattern_code = $variables[0];
+			array_shift( $variables );
+
+			if ( $pattern_code && $variables ) {
+				return self::melipayamak_pattern( $phone, $pattern_code, $variables );
+			}
+
+			return self::melipayamak_normal( $phone, $message );
+		}
+
+		/**
+		 * @param string $message
+		 *
+		 * @return bool
+		 *
+		 * @version 1.1.0
+		 */
+		public static function is_pattern( string $message ): bool {
+			return str_starts_with( $message, 'pattern:' );
+		}
+
+		/**
+		 * $message format:
+		 *
+		 * pattern:<PatternCode>
+		 * <Var1>:<Val1>
+		 * <Var2>:<Val2>
+		 * ...
+		 * ...
+		 *
+		 * @param string $message
+		 *
+		 * @return array
+		 *
+		 * @version 1.1.0
+		 */
+		public static function parse_pattern( string $message ): array {
+
+			$result = [
+				'code' => '',
+				'vars' => [],
+			];
+
+			$message = str_replace( [ "\r\n", "\n", "\\r\\n", "\\n" ], '~', $message );
+			$parts   = explode( '~', $message );
+
+			foreach ( $parts as $part ) {
+
+				[ $key, $value ] = explode( ':', $part, 2 );
+
+				$key   = trim( $key, "}{% \n\r\t\v\x00" );
+				$value = trim( $value );
+
+				if ( $key === 'pattern' ) {
+					$result['code'] = $value;
+				} elseif ( strlen( $key ) ) {
+					$result['vars'][ $key ] = $value;
+				}
+
+			}
+
+			return $result;
+		}
+
+		private static function melipayamak_normal( string $phone, string $message ): bool {
+
+			$sender = self::get_option( 'sender' );
+
+			if ( empty( $sender ) ) {
 				return false;
 			}
 
 			$data = [
-				'username' => $username,
-				'password' => $password,
+				'username' => self::get_option( 'username' ),
+				'password' => self::get_option( 'password' ),
 				'to'       => $phone,
 				'from'     => $sender,
 				'text'     => $message,
@@ -409,25 +495,14 @@ if ( ! class_exists( 'Nabik_Net_SMS' ) ) {
 			return $response > 35;
 		}
 
-		private static function melipayamak_pattern( string $phone, string $message ): bool {
-
-			$username = self::get_option( 'username' );
-			$password = self::get_option( 'password' );
-
-			if ( empty( $username ) || empty( $password ) ) {
-				return false;
-			}
-
-			$data = explode( ';', $message );
-			$code = $data[0];
-			array_shift( $data );
+		private static function melipayamak_pattern( string $phone, string $pattern_id, array $variables ): bool {
 
 			$data = [
-				'username' => $username,
-				'password' => $password,
-				'text'     => implode( ';', $data ),
+				'username' => self::get_option( 'username' ),
+				'password' => self::get_option( 'password' ),
+				'text'     => implode( ';', $variables ),
 				'to'       => $phone,
-				'bodyId'   => $code,
+				'bodyId'   => $pattern_id,
 			];
 
 			$response = wp_remote_post( 'https://rest.payamak-panel.com/api/SendSMS/BaseServiceNumber', [
@@ -468,6 +543,6 @@ if ( ! class_exists( 'Nabik_Net_SMS' ) ) {
 		}
 	}
 
-	new Nabik_Net_SMS();
+	new SMS();
 
 }

@@ -69,7 +69,7 @@ class SepalGateway extends BaseGateway implements \Nabik\Gateland\Gateways\Featu
 		if ( isset( $response['paymentNumber'] ) && $response['paymentNumber'] ) {
 
 			$transaction->update( [
-				'gateway_au' => $response['paymentNumber'],
+				'gateway_au' => strval( $response['paymentNumber'] ),
 			] );
 
 			return;
@@ -96,7 +96,7 @@ class SepalGateway extends BaseGateway implements \Nabik\Gateland\Gateways\Featu
 
 		$parameters = [
 			'apiKey'        => $this->options['api_key'],
-			'paymentNumber' => $transaction->gateway_au,
+			'paymentNumber' => strval( $transaction->gateway_au ),
 		];
 
 		$headers = [

@@ -6,14 +6,14 @@ use Nabik\GatelandPro\GatelandPro;
 
 defined('ABSPATH') || exit;
 
-wp_enqueue_style('custom-style', GATELAND_URL . 'dev_assets/css/style.css', [], GATELAND_VERSION);
-wp_enqueue_style('notyf-style', GATELAND_URL . 'dev_assets/css/notyf.min.css', [], GATELAND_VERSION);
+wp_enqueue_style('custom-style', GATELAND_URL . 'assets/css/style.css', [], GATELAND_VERSION);
+wp_enqueue_style('notyf-style', GATELAND_URL . 'assets/css/notyf.min.css', [], GATELAND_VERSION);
 
 wp_enqueue_script( 'alpine' );
-wp_enqueue_script('draggable-script', GATELAND_URL . 'dev_assets/js/draggable.js', [], GATELAND_VERSION, true);
-wp_enqueue_script('notyf-script', GATELAND_URL . 'dev_assets/js/notyf.min.js', [], GATELAND_VERSION, true);
-wp_enqueue_script('global-script', GATELAND_URL . 'dev_assets/js/global.js', ['notyf-script'], GATELAND_VERSION, true);
-wp_enqueue_script('page-script', GATELAND_URL . 'dev_assets/js/pages/gateways.js', [], GATELAND_VERSION, true);
+wp_enqueue_script('draggable-script', GATELAND_URL . 'assets/js/draggable.js', [], GATELAND_VERSION, true);
+wp_enqueue_script('notyf-script', GATELAND_URL . 'assets/js/notyf.min.js', [], GATELAND_VERSION, true);
+wp_enqueue_script('global-script', GATELAND_URL . 'assets/js/global.js', ['notyf-script'], GATELAND_VERSION, true);
+wp_enqueue_script('page-script', GATELAND_URL . 'assets/js/pages/gateways.js', [], GATELAND_VERSION, true);
 
 wp_localize_script('global-script', 'gateland', [
     'root' => esc_url_raw(rest_url()),
@@ -22,7 +22,7 @@ wp_localize_script('global-script', 'gateland', [
 ?>
 
 <script>
-    const assetsBaseUrl = "<?php echo GATELAND_URL . 'dev_assets'; ?>"
+    const assetsBaseUrl = "<?php echo GATELAND_URL . 'assets'; ?>"
 </script>
 
 <section x-data="gatelandGateways" id="sortGateways" class="gateland-container">
@@ -32,11 +32,30 @@ wp_localize_script('global-script', 'gateland', [
         <div class="container">
 
             <div class="flex items-center gap-2 flex-wrap mb-5">
-                <div class="font-semibold text-lg ml-auto">
+                <div class="font-semibold text-lg flex items-center gap-2 ml-auto">
                     درگاه‌ها
+
+                    <!-- skeleton -->
+                    <template x-if="tableLoaderIsActive">
+                        <div class="skeleton h-7 w-40 rounded-full"></div>
+                    </template>
+
+                    <template x-if="!tableLoaderIsActive">
+                        <div class="flex items-center gap-0.5 bg-blue-50 text-blue-700 text-xs rounded-full py-1 px-3">
+                            آی.پی شما:
+                            <span x-text="host_ip"></span>
+                            <button
+                                @click="gatelandCopyToClipboard($el, 'آی.پی')"
+                                :data-copy="host_ip"
+                                class="mr-1"
+                            >
+                                <img class="" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/copy.svg">
+                            </button>
+                        </div>
+                    </template>
                 </div>
                 <a href="?page=gateland-gateways-add" class="bg-primary-500 hover:bg-primary-600 flex items-center gap-2 text-sm text-white hover:text-white rounded-[8px] py-2 px-3.5">
-                    <img class="" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/plus.svg">
+                    <img class="" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/plus.svg">
                     <span>افزودن درگاه جدید</span>
                 </a>
             </div>
@@ -111,24 +130,24 @@ wp_localize_script('global-script', 'gateland', [
                 <div class="border border-gray-300 rounded-xl flex flex-col items-center justify-center text-center sm:p-10 p-5">
                     <div class="size-12 flex items-center justify-center bg-primary-50 rounded-full mb-3">
                         <div class="size-9 flex items-center justify-center bg-primary-100 rounded-full">
-                            <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/plus-square-blue.svg">
+                            <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/plus-square-blue.svg">
                         </div>
                     </div>
                     <div class="font-semibold text-gray-900 mb-3">
                         هنوز هیچ درگاه فعالی ندارید!
                     </div>
                     <div class="max-w-[575px] text-gray-600 mb-6">
-                        برای شروع تراکنش‌ها، باید یک درگاه پرداخت اضافه کنید. گیت‌لند از بیش از ۳۰
+                        برای شروع تراکنش‌ها، باید یک درگاه پرداخت اضافه کنید. گیت‌لند از بیش از ۴۰
                         درگاه پرداخت پشتیبانی می‌کند تا تجربه‌ای سریع و ایمن برای شما و مشتریانتان فراهم شود.
                     </div>
                     <a href="?page=gateland-gateways-add" class="min-w-fit bg-primary-500 hover:bg-primary-600 flex items-center sm:gap-2 gap-1 text-sm text-white hover:text-white rounded-[8px] text-nowrap py-2 px-3.5">
-                        <img  src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/plus.svg">
+                        <img  src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/plus.svg">
                         <span>افزودن اولین درگاه</span>
                     </a>
                 </div>
             </template>
 
-            <template x-if="!tableLoaderIsActive && tableData.length >= 1">
+            <div x-show="!tableLoaderIsActive && tableData.length >= 1">
                 <div class="border border-gray-300 rounded-xl overflow-hidden mb-5">
                     <div class="flex flex-wrap gap-2 items-center py-3 px-4">
                         <span class="font-semibold text-lg">
@@ -166,11 +185,11 @@ wp_localize_script('global-script', 'gateland', [
                     </div>
 
                 </div>
-            </template>
+            </div>
 
             <div x-show="tableData.length > 0" class="flex items-center flex-wrap gap-4 border border-[#738DBF] bg-primary-25 rounded-xl p-3 mb-5">
                 <div class="flex items-start gap-4">
-                    <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/featured-icon.svg">
+                    <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/featured-icon.svg">
                     <div>
                         <div class="text-gray-700 mb-1.5">
                             با افزودن درگاه‌های متفاوت، شانس موفقیت تراکنش‌هایتان را افزایش دهید.
@@ -181,7 +200,7 @@ wp_localize_script('global-script', 'gateland', [
                     </div>
                 </div>
                 <a href="?page=gateland-gateways-add" class="min-w-fit bg-primary-500 hover:bg-primary-600 flex items-center sm:gap-2 gap-1 text-sm text-white hover:text-white rounded-[8px] text-nowrap py-2 px-3.5 mr-auto">
-                    <img class="" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/plus.svg">
+                    <img class="" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/plus.svg">
                     <span>افزودن درگاه جدید</span>
                 </a>
             </div>
@@ -205,7 +224,7 @@ wp_localize_script('global-script', 'gateland', [
                 <div class="mb-3">
                     <div class="size-12 flex items-center justify-center bg-error-50 rounded-full">
                         <div class="size-9 flex items-center justify-center bg-error-100 rounded-full">
-                            <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/trash-red.svg">
+                            <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/trash-red.svg">
                         </div>
                     </div>
                 </div>
@@ -261,7 +280,7 @@ wp_localize_script('global-script', 'gateland', [
                 <div class="mb-3">
                     <div class="size-12 flex items-center justify-center bg-primary-50 rounded-full">
                         <div class="size-9 flex items-center justify-center bg-primary-100 rounded-full">
-                            <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/active.svg">
+                            <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/active.svg">
                         </div>
                     </div>
                 </div>

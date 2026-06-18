@@ -1,19 +1,23 @@
 <?php
 
+namespace Nabik\Utils\V1;
+
 use Automattic\Jetpack\Constants;
 
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
+if ( ! class_exists( '\Nabik\Utils\V1\Settings' ) ) {
 
 	/**
-	 * Class Nabik_Net_Settings
+	 * Class Settings
+	 *
+	 * @todo    Change file name to Settings when minimum php version set to 8.0.0
 	 *
 	 * @author  Nabik
 	 */
-	abstract class Nabik_Net_Settings {
+	abstract class Settings {
 
-		const VERSION = '1.1.2';
+		const VERSION = '1.0.0';
 
 		public function __construct() {
 			$this->register();
@@ -170,7 +174,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 		 */
 		function callback_text( array $args ) {
 
-			$value = sanitize_text_field( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+			$value = sanitize_text_field( $this->get_option( $args ) );
 			$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
 			$type  = isset( $args['type'] ) ? $args['type'] : 'text';
 
@@ -205,7 +209,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 		 */
 		function callback_checkbox( array $args ) {
 
-			$value = sanitize_text_field( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+			$value = sanitize_text_field( $this->get_option( $args ) );
 
 			$html = '<fieldset>';
 			$html .= sprintf( '<label for="wpuf-%1$s[%2$s]">', $args['section'], $args['id'] );
@@ -224,7 +228,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 		 */
 		function callback_multicheck( array $args ) {
 
-			$value = $this->get_option( $args['id'], $args['section'], $args['std'] );
+			$value = $this->get_option( $args );
 			$html  = '<fieldset>';
 
 			foreach ( $args['options'] as $key => $label ) {
@@ -247,7 +251,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 		 */
 		function callback_radio( array $args ) {
 
-			$value = $this->get_option( $args['id'], $args['section'], $args['std'] );
+			$value = $this->get_option( $args );
 			$html  = '<fieldset>';
 
 			foreach ( $args['options'] as $key => $label ) {
@@ -269,7 +273,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 		 */
 		function callback_select( array $args ) {
 
-			$value = sanitize_text_field( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+			$value = sanitize_text_field( $this->get_option( $args ) );
 			$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
 			$html  = sprintf( '<select class="%1$s" name="%2$s[%3$s]" id="%2$s[%3$s]" style="width: 25em">', $size, $args['section'], $args['id'] );
 
@@ -293,7 +297,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 			$section = $args['section'];
 			$id      = $args['id'];
 
-			$value = $this->get_option( $id, $section, $args['std'] );
+			$value = $this->get_option( $args );
 
 			if ( ! is_array( $value ) ) {
 				$value = [ $value ];
@@ -330,10 +334,18 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 		 */
 		function callback_textarea( array $args ) {
 
-			$value = sanitize_textarea_field( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+			$value = sanitize_textarea_field( $this->get_option( $args ) );
 			$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
 
-			$html = sprintf( '<textarea rows="5" cols="55" class="%1$s-text %5$s" id="%2$s[%3$s]" name="%2$s[%3$s]">%4$s</textarea>', $size, $args['section'], $args['id'], $value, $args['field_class'] );
+			$html = sprintf(
+				'<textarea rows="5" cols="55" class="%1$s-text %5$s" id="%2$s[%3$s]" name="%2$s[%3$s]" placeholder="%6$s">%4$s</textarea>',
+				$size,
+				$args['section'],
+				$args['id'],
+				$value,
+				$args['field_class'],
+				$args['placeholder']
+			);
 			$html .= $this->get_field_description( $args );
 
 			echo $this->esc_html( $html );
@@ -355,7 +367,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 		 */
 		function callback_wysiwyg( array $args ) {
 
-			$value = $this->get_option( $args['id'], $args['section'], $args['std'] );
+			$value = $this->get_option( $args );
 			$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : '500px';
 
 			printf( '<div style="max-width: %s;">', esc_attr( $size ) );
@@ -384,7 +396,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 		 */
 		function callback_file( array $args ) {
 
-			$value = sanitize_text_field( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+			$value = sanitize_text_field( $this->get_option( $args ) );
 			$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
 			$id    = $args['section'] . '[' . $args['id'] . ']';
 			$label = isset( $args['options']['button_label'] ) ? $args['options']['button_label'] : 'انتخاب فایل';
@@ -401,7 +413,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 		 */
 		function callback_photo( array $args ) {
 
-			$image_url = sanitize_url( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+			$image_url = sanitize_url( $this->get_option( $args ) );
 
 			$defaults = [
 				'button' => 'انتخاب لوگو',
@@ -417,7 +429,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 
 			?>
 			<img id="<?php echo esc_attr( $id ); ?>_image" src="<?php echo esc_url( $image_url ); ?>"
-				 style="max-width:50%; display:block; margin-bottom: 10px;"/>
+			     style="max-width:50%; display:block; margin-bottom: 10px;"/>
 
 			<a href="#" id="<?php echo esc_attr( $id ); ?>_upload_button" class="button"
 			   style="display: <?php echo strlen( $image_url ) ? 'none' : 'inherit'; ?>">
@@ -425,9 +437,9 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 			</a>
 
 			<input type="hidden"
-				   name="<?php echo esc_attr( $value['section'] ); ?>[<?php echo esc_attr( $value['id'] ); ?>]"
-				   id="<?php echo esc_attr( $value['section'] ); ?>[<?php echo esc_attr( $value['id'] ); ?>]"
-				   value="<?php echo esc_url( $image_url ); ?>"/>
+			       name="<?php echo esc_attr( $value['section'] ); ?>[<?php echo esc_attr( $value['id'] ); ?>]"
+			       id="<?php echo esc_attr( $value['section'] ); ?>[<?php echo esc_attr( $value['id'] ); ?>]"
+			       value="<?php echo esc_url( $image_url ); ?>"/>
 
 			<a href="#" id="<?php echo esc_attr( $id ); ?>_remove_button"
 			   style="display: <?php echo esc_attr( $display ); ?>">حذف تصویر</a>
@@ -475,7 +487,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 		 */
 		function callback_password( array $args ) {
 
-			$value = sanitize_text_field( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+			$value = sanitize_text_field( $this->get_option( $args ) );
 			$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
 
 			$html = sprintf( '<input type="password" class="%1$s-text" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s"/>', $size, $args['section'], $args['id'], $value );
@@ -491,7 +503,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 		 */
 		function callback_color( array $args ) {
 
-			$value = sanitize_text_field( $this->get_option( $args['id'], $args['section'], $args['std'] ) );
+			$value = sanitize_text_field( $this->get_option( $args ) );
 			$size  = isset( $args['size'] ) && ! is_null( $args['size'] ) ? $args['size'] : 'regular';
 
 			$html = sprintf( '<input type="text" class="%1$s-text wp-color-picker-field" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s" data-default-color="%5$s" />', $size, $args['section'], $args['id'], $value, $args['std'] );
@@ -535,7 +547,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 
 			// Iterate over registered fields and see if we can find proper callback
 			foreach ( $this->get_fields() as $section => $options ) {
-				foreach ( $options as $option ) {
+				foreach ( array_filter( $options ) as $option ) {
 					if ( $option['id'] != $slug ) {
 						continue;
 					}
@@ -551,13 +563,19 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 		/**
 		 * Get the value of a settings field
 		 *
-		 * @param string $option  settings field name
-		 * @param string $section the section name this field belongs to
-		 * @param string $default default text if it's not found
+		 * @param array $args
 		 *
 		 * @return string
 		 */
-		function get_option( $option, $section, $default = '' ) {
+		function get_option( array $args ) {
+
+			if ( array_key_exists( 'value', $args ) ) {
+				return $args['value'];
+			}
+
+			$option  = $args['id'];
+			$section = $args['section'];
+			$default = $args['std'];
 
 			$options = get_option( $section );
 
@@ -631,7 +649,7 @@ if ( ! class_exists( 'Nabik_Net_Settings' ) ) {
 
 					?>
 					<div id="<?php echo esc_attr( $section['id'] ); ?>" class="group"
-						 style="<?php echo esc_attr( $style ); ?>">
+					     style="<?php echo esc_attr( $style ); ?>">
 						<form method="post" action="options.php">
 							<?php
 							settings_fields( $section['id'] );

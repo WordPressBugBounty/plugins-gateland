@@ -8,14 +8,14 @@
 namespace Nabik\Gateland;
 
 use Illuminate\Database\Schema\Blueprint;
+use Nabik\Gateland\Models\Card;
 use Nabik\Gateland\Models\Gateway;
 use Nabik\Gateland\Models\Transaction;
 use Nabik_Net_Database;
-use Nabik_Net_Version;
 
 defined( 'ABSPATH' ) || exit;
 
-class Version extends Nabik_Net_Version {
+class Version extends \Nabik\Utils\V1\Version {
 
 	protected string $current_version = GATELAND_VERSION;
 
@@ -202,6 +202,45 @@ class Version extends Nabik_Net_Version {
 		foreach ( $gateways as $gateway ) {
 			$gateway->class = str_replace( 'StarShopGateway', 'DirectPayGateway', $gateway->class );
 			$gateway->save();
+		}
+
+	}
+
+	public function update_240() {
+
+		if ( ! Nabik_Net_Database::Schema()->hasTable( 'gateland_cards' ) ) {
+
+			Nabik_Net_Database::Schema()->create( 'gateland_cards', function ( Blueprint $table ) {
+				$table->id();
+				$table->string( 'name' );
+				$table->string( 'card_number' )->unique();
+				$table->string( 'status' );
+				$table->integer( 'max_quantity' )->nullable();
+				$table->integer( 'max_amount' )->nullable();
+				$table->boolean( 'is_failover' );
+				$table->timestamps();
+			} );
+
+		}
+
+		if ( ! Nabik_Net_Database::Schema()->hasTable( 'gateland_receipts' ) ) {
+
+			Nabik_Net_Database::Schema()->create( 'gateland_receipts', function ( Blueprint $table ) {
+				$table->id();
+				$table->foreignIdFor( Transaction::class );
+				$table->foreignIdFor( Card::class );
+				$table->foreignId( 'attachment_id' );
+				$table->string( 'card_number' )->nullable();
+				$table->string( 'tracking_number' )->nullable();
+				$table->integer( 'amount' );
+				$table->integer( 'accepted_amount' )->nullable();
+				$table->string( 'status' )->default( 'pending' );
+				$table->foreignId( 'reviewed_by' )->nullable();
+				$table->json( 'meta' )->nullable();
+				$table->timestamps();
+				$table->timestamp( 'reviewed_at' )->nullable();
+			} );
+
 		}
 
 	}

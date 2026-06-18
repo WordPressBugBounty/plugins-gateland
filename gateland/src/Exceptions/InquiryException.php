@@ -4,7 +4,6 @@ namespace Nabik\Gateland\Exceptions;
 
 use Exception;
 
-class InquiryException extends Exception
-{
+class InquiryException extends Exception {
 
 }

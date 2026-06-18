@@ -29,6 +29,7 @@ class MellatGateway extends BaseGateway implements RefundFeature, ShaparakFeatur
 	}
 
 	public function refund( Transaction $transaction, int $amount, string $description ) {
+		throw new \Exception( sprintf( "جهت استفاده از عودت وجه درگاه «%s» به نسخه حرفه‌ای ارتقا دهید.", esc_attr( $this->name ) ) );
 	}
 
 	public function currencies(): array {

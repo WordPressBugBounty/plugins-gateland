@@ -14,6 +14,24 @@ use Nabik\Gateland\Models\Transaction;
 
 class GatewayService {
 
+	public static function get_host_ip(): string {
+
+		$ip = get_transient( 'gateland_host_ip' );
+
+		if ( $ip !== false ) {
+			return $ip;
+		}
+
+		$response = wp_remote_get( 'https://icanhazip.com', [
+			'timeout' => 1,
+		] );
+		$response = wp_remote_retrieve_body( $response );
+
+		set_transient( 'gateland_host_ip', $response, MINUTE_IN_SECONDS );
+
+		return $response;
+	}
+
 	public static function activated(): array {
 
 		$gateways = get_transient( 'gateland_active_gateways' );

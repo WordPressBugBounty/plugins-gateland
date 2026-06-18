@@ -3,21 +3,24 @@
  * Plugin Name: گیت‌لند
  * Plugin URI: https://wordpress.org/plugins/gateland
  * Description: درگاه پرداخت جامع، ایمن و هوشمند وردپرس برای تمامی درگاه‌های پرداخت با قابلیت اتصال به همه افزونه‌های وردپرس
- * Version: 2.3.8
+ * Version: 2.4.4
  * Author: نابیک [Nabik.Net]
  * Author URI: https://Nabik.Net
  *
  * License URI:  https://www.gnu.org/licenses/gpl-3.0.html
  * License:      GPLv3
  *
- * WC requires at least: 7.0.0
- * WC tested up to: 10.3.5
+ * Requires at least: 6.8
+ * Requires PHP: 7.4
+ *
+ * WC requires at least: 7.6.0
+ * WC tested up to: 10.8.1
  */
 
 defined( 'ABSPATH' ) || exit;
 
 if ( ! defined( 'GATELAND_VERSION' ) ) {
-	define( 'GATELAND_VERSION', '2.3.8' );
+	define( 'GATELAND_VERSION', '2.4.4' );
 }
 
 if ( ! defined( 'GATELAND_DIR' ) ) {
@@ -32,7 +35,7 @@ if ( ! defined( 'GATELAND_URL' ) ) {
 	define( 'GATELAND_URL', plugin_dir_url( __FILE__ ) );
 }
 
-require 'vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 new \Nabik\Gateland\Install();
 new \Nabik\Gateland\Notice();
@@ -56,6 +59,10 @@ add_action( 'plugins_loaded', function () {
 add_action( 'plugins_loaded', function () {
 //	Nabik\Gateland\Plugins\Give\Load::instance();
 }, 0 );
+
+add_action( 'init', function () {
+	Nabik\Gateland\Plugins\Bookly\Load::instance();
+} );
 
 add_action( 'learn-press/ready', function () {
 	Nabik\Gateland\Plugins\LearnPress\Load::instance();

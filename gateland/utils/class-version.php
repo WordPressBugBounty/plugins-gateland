@@ -1,17 +1,19 @@
 <?php
 
+namespace Nabik\Utils\V1;
+
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'Nabik_Net_Version' ) ) {
+if ( ! class_exists( '\Nabik\Utils\V1\Version' ) ) {
 
 	/**
 	 * Class Nabik_Net_Version
 	 *
 	 * @author  Nabik
 	 */
-	class Nabik_Net_Version {
+	class Version {
 
-		const VERSION = '1.1.1';
+		const VERSION = '1.0.0';
 
 		protected string $current_version;
 
@@ -36,7 +38,9 @@ if ( ! class_exists( 'Nabik_Net_Version' ) ) {
 				wp_die( sprintf( 'Invalid minor and patch (%s) in %s.', $this->current_version, esc_html( get_called_class() ) ) );
 			}
 
-			$this->version_key = strtolower( str_replace( [ '/', '\\' ], '_', get_called_class() ) );
+			if ( empty( $this->version_key ) ) {
+				$this->version_key = strtolower( str_replace( [ '/', '\\' ], '_', get_called_class() ) );
+			}
 
 			add_action( 'admin_init', [ $this, 'migrate' ], 110 );
 		}

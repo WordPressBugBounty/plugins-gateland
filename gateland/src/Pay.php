@@ -8,7 +8,8 @@ use Nabik\Gateland\Enums\Transaction\CurrenciesEnum;
 use Nabik\Gateland\Enums\Transaction\StatusesEnum as TransactionStatusesEnum;
 use Nabik\Gateland\Exceptions\ValidationErrorException;
 use Nabik\Gateland\Exceptions\VerifyException;
-use Nabik\Gateland\Gateways\Features\BNPLFeature;
+use Nabik\Gateland\Gateways\Features\ShaparakFeature;
+use Nabik\Gateland\Helpers\SQID;
 use Nabik\Gateland\Models\Gateway;
 use Nabik\Gateland\Models\Transaction;
 use Nabik\Gateland\Services\GatewayService;
@@ -48,6 +49,7 @@ class Pay {
 			'mobile'      => 'nullable',
 			'user_id'     => 'nullable|integer|min:0',
 			'gateway_id'  => 'nullable|integer|min:1',
+			'meta'        => 'nullable|array|min:1',
 		] );
 
 		if ( $validation->fails() ) {
@@ -81,6 +83,7 @@ class Pay {
 			'order_id'    => intval( $data['order_id'] ),
 			'mobile'      => esc_sql( $data['mobile'] ?? null ),
 			'status'      => TransactionStatusesEnum::STATUS_PENDING,
+			'meta'        => $data['meta'] ?? null,
 		];
 
 		if ( $data['gateway_id'] ?? 0 ) {
@@ -101,14 +104,14 @@ class Pay {
 
 		return self::response( true, null, [
 			'authority'    => $transaction->id,
-			'payment_link' => $transaction->getPayURL(),
+			'payment_link' => $transaction->getPrettyPayURL(),
 		] );
 	}
 
-	public static function pay( int $transaction_id ) {
+	public static function pay( string $transaction_token ) {
 
 		/** @var Transaction $transaction */
-		$transaction = Transaction::find( $transaction_id );
+		$transaction = Transaction::find( SQID::decode( $transaction_token ) );
 
 		if ( is_null( $transaction ) ) {
 			self::showErrorPage( 'تراکنش یافت نشد.' );
@@ -116,8 +119,15 @@ class Pay {
 
 		$transaction->logs()->create( [
 			'event' => 'Call::pay',
-			'data'  => $transaction->toArray(),
+			'data'  => [
+				'token'       => $transaction_token,
+				'transaction' => $transaction->toArray(),
+			],
 		] );
+
+		if ( $transaction->token != $transaction_token ) {
+			self::showErrorPage( 'تراکنش یافت نشد!' );
+		}
 
 		if ( Gateland::get_option( 'general.iran_access', 0 ) && defined( 'GATELAND_PRO_DIR' ) ) {
 
@@ -138,7 +148,7 @@ class Pay {
 						],
 					] );
 
-					self::showPayPage( $transaction, 'جهت پرداخت لطفا فیلترشکن خود را خاموش کرده و مجددا تلاش کنید.' );
+					self::showVPNPage( $transaction );
 				}
 
 			} catch ( Reader\InvalidDatabaseException $e ) {
@@ -192,7 +202,9 @@ class Pay {
 
 			$gatewayBuilder = $gateway->build();
 
-			if ( ! $transaction->gateway_id && is_a( $gatewayBuilder, BNPLFeature::class ) ) {
+			if ( ! $transaction->gateway_id && ! is_a( $gatewayBuilder, ShaparakFeature::class ) ) {
+				$gateway = null;
+
 				continue;
 			}
 
@@ -234,9 +246,10 @@ class Pay {
 		return $gateway->build()->redirect( $transaction );
 	}
 
-	public static function callback( int $transaction_id, string $sign = null ) {
+	public static function callback( string $transaction_token, string $sign ) {
+
 		/** @var Transaction $transaction */
-		$transaction = Transaction::find( $transaction_id );
+		$transaction = Transaction::find( SQID::decode( $transaction_token ) );
 
 		if ( is_null( $transaction ) ) {
 			self::showErrorPage( 'تراکنش یافت نشد.' );
@@ -250,8 +263,12 @@ class Pay {
 			],
 		] );
 
-		if ( $transaction->sign != $sign ) {
+		if ( $transaction->token != $transaction_token ) {
 			self::showErrorPage( 'تراکنش یافت نشد!' );
+		}
+
+		if ( $transaction->sign != $sign ) {
+			self::showErrorPage( 'تراکنش یافت نشد :)' );
 		}
 
 		if ( ! $transaction->isPending() ) {
@@ -279,7 +296,7 @@ class Pay {
 		try {
 			$transaction->gateway->build()->verify( $transaction );
 		} catch ( VerifyException $e ) {
-			self::showVerifyPage( $e );
+			self::showVerifyPage( $transaction, $e );
 		}
 
 		wp_redirect( $transaction->callback );
@@ -332,7 +349,7 @@ class Pay {
 		] );
 	}
 
-	private static function response( bool $success, string $message = null, array $data = null ): array {
+	private static function response( bool $success, ?string $message = null, ?array $data = null ): array {
 		return [
 			'success' => $success,
 			'message' => $message,
@@ -346,13 +363,13 @@ class Pay {
 	 *
 	 * @return no-return
 	 */
-	protected static function showErrorPage( string $message, string $alert = 'danger' ) {
+	public static function showErrorPage( string $message, string $alert = 'danger' ) {
 
 		if ( ob_get_length() ) {
 			ob_clean();
 		}
 
-		$error = apply_filters( 'nabik/gateland/pay_error_message', $message );
+		$error = apply_filters( 'nabik/gateland/pay_error_message', $message, $alert );
 
 		include GATELAND_DIR . '/templates/pay/error.php';
 		exit();
@@ -363,13 +380,13 @@ class Pay {
 	 *
 	 * @return no-return
 	 */
-	protected static function showVerifyPage( VerifyException $e ) {
+	public static function showVerifyPage( Transaction $transaction, VerifyException $e ) {
 
 		if ( ob_get_length() ) {
 			ob_clean();
 		}
 
-		$error = 'خطایی در زمان تایید تراکنش رخ داده است، لطفا مجددا تلاش کنید.';
+		$error = sprintf( 'ارتباط با درگاه پرداخت «%s» برقرار نشد و وضعیت تراکنش نامشخص است. لطفا چند لحظه صبر کنید و دوباره تلاش کنید.', $transaction->gateway_label );
 
 		if ( ! empty( $e->getMessage() ) ) {
 			$error = $e->getMessage();
@@ -385,13 +402,28 @@ class Pay {
 	 *
 	 * @return no-return
 	 */
-	protected static function showPayPage( Transaction $transaction, $message ) {
+	public static function showPayPage( Transaction $transaction, $message ) {
 
 		if ( ob_get_length() ) {
 			ob_clean();
 		}
 
 		include GATELAND_DIR . '/templates/pay/pay.php';
+		exit();
+	}
+
+	/**
+	 * @param Transaction $transaction
+	 *
+	 * @return no-return
+	 */
+	public static function showVPNPage( Transaction $transaction ) {
+
+		if ( ob_get_length() ) {
+			ob_clean();
+		}
+
+		include GATELAND_DIR . '/templates/pay/vpn.php';
 		exit();
 	}
 }

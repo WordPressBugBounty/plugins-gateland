@@ -23,7 +23,7 @@ abstract class RestAPI {
 	 *
 	 * @return no-return
 	 */
-	public static function response( bool $success, string $message = null, array $data = [] ) {
+	public static function response( bool $success, ?string $message = null, array $data = [] ) {
 
 		echo json_encode( [
 			'success' => $success,

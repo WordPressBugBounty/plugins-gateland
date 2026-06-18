@@ -22,6 +22,7 @@ return array(
     'Symfony\\Component\\HttpFoundation\\' => array($vendorDir . '/symfony/http-foundation'),
     'Symfony\\Component\\Finder\\' => array($vendorDir . '/symfony/finder'),
     'Symfony\\Component\\Console\\' => array($vendorDir . '/symfony/console'),
+    'Sqids\\' => array($vendorDir . '/nabik/sqids/src'),
     'Rakit\\Validation\\' => array($vendorDir . '/rakit/validation/src'),
     'Psr\\SimpleCache\\' => array($vendorDir . '/psr/simple-cache/src'),
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),

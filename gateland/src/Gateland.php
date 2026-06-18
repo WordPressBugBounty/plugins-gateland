@@ -14,6 +14,7 @@ namespace Nabik\Gateland;
 use Nabik\Gateland\Admin\Menu;
 use Nabik\Gateland\Services\APIService;
 use Nabik\Gateland\Services\CronService;
+use Nabik\Gateland\Services\SMSService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -36,8 +37,8 @@ class Gateland {
 
 	private function autoload() {
 		new Menu();
-		new SMS();
 
+		new SMSService();
 		new APIService();
 		new CronService();
 	}
@@ -69,13 +70,13 @@ class Gateland {
 	public static function handleCustomRule() {
 		global $wp_query;
 
-		$transactionID = get_query_var( 'gateland_id' );
-		$page          = get_query_var( 'gateland_page' );
+		$transaction_token = get_query_var( 'gateland_id' );
+		$page              = get_query_var( 'gateland_page' );
 
-		if ( $page == 'pay' ) {
+		if ( $page == 'pay' && is_string( $transaction_token ) ) {
 
 			$wp_query->is_404 = false;
-			Pay::pay( $transactionID );
+			Pay::pay( $transaction_token );
 
 			exit();
 		}
@@ -84,7 +85,7 @@ class Gateland {
 
 	public function enqueue_alpine() {
 		$suffix = wp_scripts_get_suffix();
-		wp_register_script( 'alpine', GATELAND_URL . 'dev_assets/js/alpine' . $suffix . '.js', [], '3.15.0', [ 'strategy' => 'defer' ] );
+		wp_register_script( 'alpine', GATELAND_URL . 'assets/js/alpine' . $suffix . '.js', [], '3.15.0', [ 'strategy' => 'defer' ] );
 	}
 
 	public static function get_option( string $option_name, $default = null ) {

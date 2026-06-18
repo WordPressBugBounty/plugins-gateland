@@ -7,13 +7,13 @@ use Nabik\Gateland\Models\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 
-wp_enqueue_style('custom-style', GATELAND_URL . 'dev_assets/css/style.css', [], GATELAND_VERSION);
-wp_enqueue_style('notyf-style', GATELAND_URL . 'dev_assets/css/notyf.min.css', [], GATELAND_VERSION);
+wp_enqueue_style('custom-style', GATELAND_URL . 'assets/css/style.css', [], GATELAND_VERSION);
+wp_enqueue_style('notyf-style', GATELAND_URL . 'assets/css/notyf.min.css', [], GATELAND_VERSION);
 
 wp_enqueue_script( 'alpine' );
-wp_enqueue_script('notyf-script', GATELAND_URL . 'dev_assets/js/notyf.min.js', [], GATELAND_VERSION, true);
-wp_enqueue_script('global-script', GATELAND_URL . 'dev_assets/js/global.js', ['notyf-script'], GATELAND_VERSION, true);
-wp_enqueue_script('page-script', GATELAND_URL . 'dev_assets/js/pages/plugins.js', [], GATELAND_VERSION, true);
+wp_enqueue_script('notyf-script', GATELAND_URL . 'assets/js/notyf.min.js', [], GATELAND_VERSION, true);
+wp_enqueue_script('global-script', GATELAND_URL . 'assets/js/global.js', ['notyf-script'], GATELAND_VERSION, true);
+wp_enqueue_script('page-script', GATELAND_URL . 'assets/js/pages/plugins.js', [], GATELAND_VERSION, true);
 
 wp_localize_script( 'global-script', 'gateland', [
     'root'  => esc_url_raw( rest_url() ),
@@ -103,7 +103,7 @@ wp_localize_script( 'global-script', 'gateland', [
                                     <template x-if="plugin.coming_soon">
                                         <div class="flex items-center gap-1 text-indigo-700 bg-indigo-50 rounded-full text-sm py-1 px-3">
                                             <div class="min-w-3 w-3">
-                                                <img class="max-w-full" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/stars.svg">
+                                                <img class="max-w-full" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/stars.svg">
                                             </div>
 
                                             <span>به زودی...</span>
@@ -113,7 +113,7 @@ wp_localize_script( 'global-script', 'gateland', [
                                     <template x-if="!plugin.coming_soon & !plugin.is_installed & !plugin.is_activated">
                                         <a :href="plugin.install_url" target="_blank" class="flex items-center gap-1.5 text-sm text-primary-700 font-semibold rounded-[8px] bg-primary-50 hover:bg-primary-100 py-2 px-4">
                                             <div class="min-w-5 w-5">
-                                                <img class="max-w-full" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/info-square-dark.svg">
+                                                <img class="max-w-full" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/info-square-dark.svg">
                                             </div>
                                             <span>مشاهده و نصب</span>
                                         </a>
@@ -122,7 +122,7 @@ wp_localize_script( 'global-script', 'gateland', [
                                     <template x-if="!plugin.coming_soon & plugin.is_installed & !plugin.is_activated">
                                         <a :href="plugin.activate_url" target="_blank" class="flex items-center gap-2 text-sm text-gray-700 font-semibold rounded-[8px] border border-gray-300 hover:bg-gray-100 py-2 px-4">
                                             <div class="min-w-5">
-                                                <img class="max-w-full" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/power.svg">
+                                                <img class="max-w-full" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/power.svg">
                                             </div>
                                             <span>فعال سازی</span>
                                         </a>
@@ -131,7 +131,7 @@ wp_localize_script( 'global-script', 'gateland', [
                                     <template x-if="!plugin.coming_soon & plugin.is_installed & !plugin.is_activated">
                                         <div class="flex items-center gap-1 text-success-700 bg-success-50 rounded-full text-sm py-1 px-3">
                                             <div class="min-w-3 w-3">
-                                                <img class="max-w-full" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/check-circle-broken.svg">
+                                                <img class="max-w-full" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/check-circle-broken.svg">
                                             </div>
                                             <span>نصب شده</span>
                                         </div>
@@ -140,7 +140,7 @@ wp_localize_script( 'global-script', 'gateland', [
                                     <template x-if="!plugin.coming_soon & plugin.is_installed & plugin.is_activated">
                                         <div class="flex items-center gap-1 text-success-700 bg-success-50 rounded-full text-sm py-1 px-3">
                                             <div class="min-w-3 w-3">
-                                                <img class="max-w-full" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/check-circle-broken.svg">
+                                                <img class="max-w-full" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/check-circle-broken.svg">
                                             </div>
                                             <span>نصب و فعال </span>
                                         </div>
@@ -149,7 +149,7 @@ wp_localize_script( 'global-script', 'gateland', [
                                     <template x-if="plugin.document_url">
                                         <a :href="plugin.document_url" target="_blank" class="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-600 font-semibold rounded-[8px] border border-transparent hover:bg-gray-200 py-2 px-4">
                                             <div class="min-w-5">
-                                                <img class="max-w-full" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/play-square.svg">
+                                                <img class="max-w-full" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/play-square.svg">
                                             </div>
                                             <span>آموزش</span>
                                         </a>
@@ -164,7 +164,7 @@ wp_localize_script( 'global-script', 'gateland', [
 
             <div x-show="!pageLoaderIsActive" class="flex items-center flex-wrap gap-4 border border-[#738DBF] rounded-xl p-3 mb-5">
                 <div class="flex items-start gap-4">
-                    <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/featured-icon.svg">
+                    <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/featured-icon.svg">
                     <div>
                         <div class="text-gray-700 mb-1.5">
                             افزودن افزونه جدید به گیت‌لند
@@ -175,7 +175,7 @@ wp_localize_script( 'global-script', 'gateland', [
                     </div>
                 </div>
                 <a href="https://t.me/nabik_net" target="_blank" class="min-w-fit bg-primary-500 hover:bg-primary-600 flex items-center sm:gap-2 gap-1 text-sm text-white hover:!text-white rounded-[8px] text-nowrap py-2 px-3.5 mr-auto">
-                    <img class="" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/plus.svg">
+                    <img class="" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/plus.svg">
                     <span>ارسال رایگان درخواست</span>
                 </a>
             </div>

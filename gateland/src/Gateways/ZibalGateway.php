@@ -54,7 +54,7 @@ class ZibalGateway extends BaseGateway implements \Nabik\Gateland\Gateways\Featu
 			$parameters['allowedCards'] = $transaction->allowed_cards;
 		}
 
-		if ( ! empty( trim( $this->options['multiplexing'] ) ) ) {
+		if ( ! empty( trim( strval( $this->options['multiplexing'] ) ) ) ) {
 			$parameters['percentMode']       = 1;
 			$parameters['feeMode']           = 0;
 			$parameters['multiplexingInfos'] = json_decode( $this->options['multiplexing'] );
@@ -109,6 +109,12 @@ class ZibalGateway extends BaseGateway implements \Nabik\Gateland\Gateways\Featu
 		$this->log( $transaction, 'inquiry', [
 			'transaction' => $transaction->toArray(),
 		] );
+
+		$success = intval( $_GET['success'] ?? 1 );
+
+		if ( ! $success ) {
+			return $this->cancelled( $transaction, 0 );
+		}
 
 		$parameters = [
 			'merchant'           => $this->options['merchant'],

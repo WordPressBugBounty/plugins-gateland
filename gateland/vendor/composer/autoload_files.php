@@ -21,8 +21,5 @@ return array(
     '4364d9898253482270d33c3e7d349234' => $vendorDir . '/hekmatinasser/notowo/src/helpers.php',
     '4ad677cf23be1eeec8c74951804d4cb0' => $vendorDir . '/hekmatinasser/verta/src/helpers.php',
     '3cc69e6a0d39c45fc82449ceb4c5e5d5' => $baseDir . '/utils/class-database.php',
-    '83c05da294884320cf3c88b32a66ddcd' => $baseDir . '/utils/class-install.php',
-    '857fba2172bfdf4acb2a4cda541de9a0' => $baseDir . '/utils/class-settings.php',
     'a001a1a0c68c06ea9f443947862fc5ea' => $baseDir . '/utils/class-sms.php',
-    'd3ea0cafb931860186027149a7077b5c' => $baseDir . '/utils/class-version.php',
 );

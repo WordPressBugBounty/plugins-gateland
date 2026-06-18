@@ -4,11 +4,11 @@ namespace Nabik\Gateland\Admin;
 
 use Nabik\Gateland\Gateland;
 use Nabik\GatelandPro\GatelandPro;
-use Nabik_Net_Settings;
+use Nabik_Net_License;
 
 defined( 'ABSPATH' ) || exit;
 
-class Settings extends Nabik_Net_Settings {
+class Settings extends \Nabik\Utils\V1\Settings {
 
 	protected static $_instance = null;
 
@@ -52,6 +52,10 @@ class Settings extends Nabik_Net_Settings {
 				'id'    => 'gateland_proxy',
 				'title' => 'پروکسی',
 			],
+			[
+				'id'    => 'gateland_zohal',
+				'title' => 'زحل',
+			],
 			class_exists( GatelandPro::class ) ? [
 				'id'    => 'gateland_license',
 				'title' => 'لایسنس',
@@ -63,24 +67,56 @@ class Settings extends Nabik_Net_Settings {
 
 	public function get_fields(): array {
 
-		$color   = '';
-		$message = '';
-
-		$has_pro = false;
+		$color       = '';
+		$message     = '';
+		$last_log    = null;
+		$license_url = null;
+		$has_pro     = false;
 
 		if ( class_exists( GatelandPro::class ) ) {
+
+			if ( ! GatelandPro::is_active() &&
+			     isset( $_GET['nabik_license'], $_GET['csrf'] ) &&
+			     wp_verify_nonce( $_GET['csrf'], 'gateland_save_license' )
+			) {
+				update_option( 'gateland_pro_license_key', sanitize_text_field( $_GET['nabik_license'] ) );
+
+				Nabik_Net_License::log( GATELAND_PRO_DIR, null );
+			}
 
 			if ( GatelandPro::is_active() ) {
 
 				$has_pro = true;
 
 				$color   = 'green';
-				$message = 'افزونه با موفقیت فعال شده است.' . GatelandPro::$message;
+				$message = 'افزونه با موفقیت فعال شده است.';
+
+				Nabik_Net_License::log( GATELAND_PRO_DIR, null );
 
 			} else {
 
 				$color   = 'red';
-				$message = GatelandPro::$message;
+				$message = GatelandPro::$error . ' - ' . GatelandPro::$message;
+
+				if ( file_exists( GATELAND_PRO_DIR . '/error.log' ) ) {
+					$logs     = file_get_contents( GATELAND_PRO_DIR . '/error.log' );
+					$logs     = explode( PHP_EOL, $logs );
+					$logs     = array_values( array_filter( array_reverse( $logs ) ) );
+					$last_log = $logs[0] ?? null;
+				}
+
+				if ( Gateland::get_option( 'license.key' ) ) {
+					$callback_url = add_query_arg( [
+						'page' => 'gateland-settings',
+						'csrf' => wp_create_nonce( 'gateland_save_license' ),
+					], admin_url( 'admin.php?page=gateland-settings' ) );
+
+					$license_url = add_query_arg( [
+						'callback_url' => urlencode( $callback_url ),
+						'key'          => Gateland::get_option( 'license.key' ),
+						'ver'          => GatelandPro::get_version(),
+					], 'https://nabik.net/wp-json/license/v1/redirect' );
+				}
 
 			}
 
@@ -124,6 +160,7 @@ class Settings extends Nabik_Net_Settings {
 								<li><strong>{last_name}</strong> نام خانوادگی مشتری</li>
 								<li><strong>{order_id}</strong> شناسه سفارش</li>
 								<li><strong>{transaction_id}</strong> شناسه تراکنش</li>
+								<li><strong>{transaction_token}</strong> توکن تراکنش</li>
 								<li><strong>{description}</strong> توضیحات تراکنش</li>
 								<li><strong>{amount}</strong> مبلغ تراکنش</li>
 								</ul>',
@@ -137,6 +174,7 @@ class Settings extends Nabik_Net_Settings {
 					'desc'    => sprintf( 'لینک پرداختی که برای کاربر ارسال می‌شود.
 					</br>
 					برای مثال اگر شما pay‌ وارد کنید، آدرس پرداخت می‌شود: %s', site_url( 'pay' ) ),
+					// @todo add more description, move to advanced section
 				],
 				[
 					'label'   => 'پیامک ایجاد تراکنش',
@@ -172,15 +210,23 @@ class Settings extends Nabik_Net_Settings {
 				$has_pro ? [] : [
 					'id'   => 'gateway_bot',
 					'type' => 'html',
-					'desc' => 'برای دریافت گزارش تراکنش‌های موفق می‌توانید گیت‌لند حرفه‌ای را بدون نیاز به داشتن سرور مجزا، به ربات‌ها متصل کنید.<br>
+					'desc' => 'برای دریافت گزارش تراکنش‌های موفق می‌توانید گیت‌لند حرفه‌ای را بدون نیاز به داشتن سرور مجزا، به ربات‌های تلگرام و بله متصل کنید.<br>
 این قابلیت برای کاربران <a href="https://l.nabik.net/gateland-pro?utm-source=bot" target="_blank">نسخه حرفه‌ای</a> افزونه و بدون هزینه و محدودیت قابل استفاده می‌باشد.<br>',
 				],
 				[
-					'id'      => 'telegram_id',
-					'label'   => 'شناسه یکتا تلگرام',
+					'id'    => 'help',
+					'type'  => 'html',
+					'label' => 'راهنما',
+					'desc'  => 'برای استفاده از ربات‌های گیت‌لند، کافیست به ربات‌های زیر پیام بدهید و شناسه یکتا خود را دریافت کنید:<br>
+ربات گیت لند در تلگرام: <a href="https://t.me/GatelandBot" target="_blank">https://t.me/GatelandBot</a><br>
+ربات گیت لند در بله: <a href="https://ble.ir/GatelandBot" target="_blank">https://ble.ir/GatelandBot</a><br>',
+				],
+				[
+					'id'      => 'recipient_ids',
+					'label'   => 'شناسه یکتا ربات',
 					'default' => null,
-					'type'    => 'text',
-					'desc'    => 'برای دریافت شناسه یکتا تلگرام کافیست به ربات گیت‌لند در تلگرام پیام دهید. <a href="https://t.me/GatelandBot" target="_blank">https://t.me/GatelandBot</a>',
+					'type'    => 'textarea',
+					'desc'    => 'در هر سطر یک شناسه یکتا وارد کنید. (حداکثر ۵ شناسه یکتا)',
 				],
 			],
 			'gateland_proxy'   => [
@@ -232,6 +278,20 @@ class Settings extends Nabik_Net_Settings {
 					'desc'    => 'Password',
 				],
 			],
+			'gateland_zohal'   => [
+				[
+					'id'   => 'introduce',
+					'type' => 'html',
+					'desc' => 'زحل ارائه دهنده سرویس‌های استعلام و احراز هویت است. با فعالسازی زحل از امکانات استعلام بانکی آن بهره ببرید.',
+				],
+				[
+					'id'      => 'api_key',
+					'label'   => 'توکن',
+					'type'    => 'text',
+					'default' => '',
+					'desc'    => 'برای دریافت توکن زحل، <a href="https://l.nabik.net/zohal?utm_source=gateland" target="_blank"> ثبت نام کرده و وارد شوید</a>، سپس از منو توسعه‌دهنگان یک توکن ایجاد کنید',
+				],
+			],
 			'gateland_license' => [
 				[
 					'label' => 'وضعیت',
@@ -247,6 +307,28 @@ class Settings extends Nabik_Net_Settings {
 					'placeholder' => 'NGL-PRO-',
 					'desc'        => 'کلید لایسنس خود را از بخش حساب کاربری <a href="https://nabik.net/my-account/licenses/" target="_blank">نابیک</a> دریافت کنید.',
 				],
+				[
+					'label' => 'نسخه گیت‌لند',
+					'id'    => 'version',
+					'desc'  => sprintf( 'رایگان: %s - حرفه‌ای: %s', GATELAND_VERSION, defined( 'GATELAND_PRO_VERSION' ) ? GATELAND_PRO_VERSION : '-' ),
+					'type'  => 'html',
+				],
+				$last_log ? [
+					'label' => 'لاگ',
+					'id'    => 'log',
+					'desc'  => sprintf(
+						'خطایی در زمان فعالسازی لایسنس رخ داده است. <a href="%s" target="_blank">مشاهده لاگ</a><br>%s',
+						GATELAND_PRO_URL . 'error.log',
+						$last_log
+					),
+					'type'  => 'html',
+				] : [],
+				$license_url ? [
+					'label' => 'فعالسازی دستی',
+					'id'    => 'manual',
+					'desc'  => sprintf( '<a href="%s">برای فعالسازی دستی لایسنس، اینجا کلیک کنید.</a>', $license_url ),
+					'type'  => 'html',
+				] : [],
 			],
 		];
 	}

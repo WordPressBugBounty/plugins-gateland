@@ -4,13 +4,13 @@ use Nabik\Gateland\Models\Gateway;
 
 defined( 'ABSPATH' ) || exit;
 
-wp_enqueue_style('custom-style', GATELAND_URL . 'dev_assets/css/style.css', [], GATELAND_VERSION);
-wp_enqueue_style('notyf-style', GATELAND_URL . 'dev_assets/css/notyf.min.css', [], GATELAND_VERSION);
+wp_enqueue_style('custom-style', GATELAND_URL . 'assets/css/style.css', [], GATELAND_VERSION);
+wp_enqueue_style('notyf-style', GATELAND_URL . 'assets/css/notyf.min.css', [], GATELAND_VERSION);
 
 wp_enqueue_script( 'alpine' );
-wp_enqueue_script('notyf-script', GATELAND_URL . 'dev_assets/js/notyf.min.js', [], GATELAND_VERSION, true);
-wp_enqueue_script('global-script', GATELAND_URL . 'dev_assets/js/global.js', ['notyf-script'], GATELAND_VERSION, true);
-wp_enqueue_script('page-script', GATELAND_URL . 'dev_assets/js/pages/edit-gateway.js', [], GATELAND_VERSION, true);
+wp_enqueue_script('notyf-script', GATELAND_URL . 'assets/js/notyf.min.js', [], GATELAND_VERSION, true);
+wp_enqueue_script('global-script', GATELAND_URL . 'assets/js/global.js', ['notyf-script'], GATELAND_VERSION, true);
+wp_enqueue_script('page-script', GATELAND_URL . 'assets/js/pages/edit-gateway.js', [], GATELAND_VERSION, true);
 
 wp_localize_script('global-script', 'gateland', [
     'root' => esc_url_raw(rest_url()),
@@ -26,7 +26,7 @@ wp_localize_script('global-script', 'gateland', [
                 <div class="mb-6">
                     <div class="mb-3">
                         <a href="?page=gateland-gateways" class="inline-flex items-center gap-2 hover:translate-x-0.5">
-                            <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/arrow-back.svg">
+                            <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/arrow-back.svg">
                             <div class="text-sm text-primary-500 font-semibold">
                                 بازگشت به لیست درگاه‌ها
                             </div>

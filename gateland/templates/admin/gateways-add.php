@@ -6,13 +6,13 @@ use Nabik\GatelandPro\GatelandPro;
 
 defined('ABSPATH') || exit;
 
-wp_enqueue_style('custom-style', GATELAND_URL . 'dev_assets/css/style.css', [], GATELAND_VERSION);
-wp_enqueue_style('notyf-style', GATELAND_URL . 'dev_assets/css/notyf.min.css', [], GATELAND_VERSION);
+wp_enqueue_style('custom-style', GATELAND_URL . 'assets/css/style.css', [], GATELAND_VERSION);
+wp_enqueue_style('notyf-style', GATELAND_URL . 'assets/css/notyf.min.css', [], GATELAND_VERSION);
 
 wp_enqueue_script( 'alpine' );
-wp_enqueue_script('notyf-script', GATELAND_URL . 'dev_assets/js/notyf.min.js', [], GATELAND_VERSION, true);
-wp_enqueue_script('global-script', GATELAND_URL . 'dev_assets/js/global.js', ['notyf-script'], GATELAND_VERSION, true);
-wp_enqueue_script('page-script', GATELAND_URL . 'dev_assets/js/pages/add-gateway.js', [], GATELAND_VERSION, true);
+wp_enqueue_script('notyf-script', GATELAND_URL . 'assets/js/notyf.min.js', [], GATELAND_VERSION, true);
+wp_enqueue_script('global-script', GATELAND_URL . 'assets/js/global.js', ['notyf-script'], GATELAND_VERSION, true);
+wp_enqueue_script('page-script', GATELAND_URL . 'assets/js/pages/add-gateway.js', [], GATELAND_VERSION, true);
 
 wp_localize_script('global-script', 'gateland', [
     'root' => esc_url_raw(rest_url()),
@@ -29,7 +29,7 @@ wp_localize_script('global-script', 'gateland', [
             <div class="mb-6">
                 <div class="mb-3">
                     <a href="?page=gateland-gateways" class="inline-flex items-center gap-2 hover:translate-x-0.5">
-                        <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/arrow-back.svg">
+                        <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/arrow-back.svg">
                         <div class="text-sm text-primary-500 font-semibold">
                             بازگشت به لیست درگاه‌ها
                         </div>
@@ -57,7 +57,7 @@ wp_localize_script('global-script', 'gateland', [
                                         <div class="size-2 bg-primary-600 rounded-full"></div>
                                     </template>
                                     <template x-if="currentStep === 'setting'">
-                                        <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/tick.svg">
+                                        <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/tick.svg">
                                     </template>
                                 </div>
                             </div>
@@ -128,13 +128,32 @@ wp_localize_script('global-script', 'gateland', [
 
                     <div class="bg-white border border-gray-300 rounded-xl overflow-hidden mb-5">
                         <div class="flex items-center flex-wrap gap-3 p-4">
-                            <div class="text-lg font-semibold order-first ml-auto">
+                            <div class="text-lg font-semibold order-first flex items-center flex-wrap gap-2 ml-auto">
                                 درگاه‌ها
+
+                                <!-- skeleton -->
+                                <template x-if="tableLoaderIsActive">
+                                    <div class="skeleton h-7 w-40 rounded-full"></div>
+                                </template>
+
+                                <template x-if="!tableLoaderIsActive">
+                                    <div class="flex items-center gap-0.5 bg-blue-50 text-blue-700 text-xs rounded-full py-1 px-3">
+                                        آی.پی شما:
+                                        <span x-text="host_ip"></span>
+                                        <button
+                                                @click="gatelandCopyToClipboard($el, 'آی.پی')"
+                                                :data-copy="host_ip"
+                                                class="mr-1"
+                                        >
+                                            <img class="" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/copy.svg">
+                                        </button>
+                                    </div>
+                                </template>
                             </div>
-                            <template x-if="!isProActive">
+                            <template x-if="!isProActive && !tableLoaderIsActive">
                                 <div class="flex items-center flex-wrap gap-3">
                                     <div class="md:w-auto bg-primary-50 rounded-full flex items-center gap-2 md:order-1 order-2  py-1 px-2.5">
-                                        <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/info-square.svg">
+                                        <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/info-square.svg">
                                         <span class="text-sm text-primary-500">برای دسترسی به تمامی درگاه‌ها، به نسخه تجاری ارتقا دهید.</span>
                                     </div>
                                     <a href="https://l.nabik.net/gateland-pro?utm_source=add-gateway" target="_blank"
@@ -145,35 +164,68 @@ wp_localize_script('global-script', 'gateland', [
                             </template>
                         </div>
                         <div class="border-y border-gray-300 py-3 px-4">
-                            <div class="inline-flex md:gap-0 gap-2 max-w-full md:border md:rounded-[8px] text-sm text-nowrap font-semibold md:overflow-hidden overflow-auto hidden-scrollbar">
-                                <button
-                                        @click="tableFilters.type = null"
-                                        class="md:border-0 md:!border-l border border-gray-300 hover:bg-gray-100 md:rounded-none rounded-full md:py-2.5 py-2 md:px-4 px-3.5"
-                                        :class="{'bg-gray-100' : (tableFilters.type === null)}"
-                                >
-                                    همه درگاه‌ها
-                                </button>
-                                <button
-                                        @click="tableFilters.type = 'ShaparakFeature'"
-                                        class="md:border-0 md:!border-l border border-gray-300 hover:bg-gray-100 md:rounded-none rounded-full md:py-2.5 py-2 md:px-4 px-3.5"
-                                        :class="{'bg-gray-100' : (tableFilters.type === 'ShaparakFeature')}"
-                                >
-                                    درگاه‌های بانکی
-                                </button>
-                                <button
-                                        @click="tableFilters.type = 'BNPLFeature'"
-                                        class="md:border-0  border border-gray-300 hover:bg-gray-100 md:rounded-none rounded-full md:py-2.5 py-2 md:px-4 px-3.5"
-                                        :class="{'bg-gray-100' : (tableFilters.type === 'BNPLFeature')}"
-                                >
-                                    درگاه‌های اعتباری
-                                </button>
+                            <!--skeleton-->
+                            <template x-if="tableLoaderIsActive">
+                                <div class="inline-flex md:gap-0 gap-2 max-w-full md:border md:rounded-[8px] text-sm text-nowrap font-semibold md:overflow-hidden overflow-auto hidden-scrollbar">
+                                    <template x-for="item in [1,2,3,4]">
+                                        <div class="skeleton w-32 h-10 md:rounded-none rounded-full"></div>
+                                    </template>
+                                </div>
+                            </template>
 
-                                <!--
-                                <button class="md:border-0 border hover:bg-gray-100 md:rounded-none rounded-full md:py-2.5 py-2 md:px-4 px-3.5">
-                                    پرداخت‌یارها
-                                </button>
-                                -->
-                            </div>
+                            <template x-if="!tableLoaderIsActive">
+                                <div class="inline-flex md:gap-0 gap-2 max-w-full md:border md:rounded-[8px] text-sm text-nowrap font-semibold md:overflow-hidden overflow-auto hidden-scrollbar">
+                                    <button
+                                            @click="tableFilters.type = null"
+                                            class="flex items-center gap-2 md:border-0 md:!border-l border border-gray-300 hover:bg-gray-100 md:rounded-none rounded-full md:py-2.5 py-2 md:px-4 px-3.5"
+                                            :class="{'bg-gray-100' : (tableFilters.type === null)}"
+                                    >
+                                        همه درگاه‌ها
+                                        <span
+                                                x-text="tableData.length"
+                                                class="bg-primary-50 text-primary-700 rounded-full text-xs py-0.5 px-2"
+                                        >
+                                    </button>
+                                    <button
+                                            @click="tableFilters.type = 'ShaparakFeature'"
+                                            class="flex items-center gap-2 md:border-0 md:!border-l border border-gray-300 hover:bg-gray-100 md:rounded-none rounded-full md:py-2.5 py-2 md:px-4 px-3.5"
+                                            :class="{'bg-gray-100' : (tableFilters.type === 'ShaparakFeature')}"
+                                    >
+                                        درگاه‌های بانکی
+                                        <span
+                                                x-text="getCountGatewaysByType('ShaparakFeature')"
+                                                class="bg-primary-50 text-primary-700 rounded-full text-xs py-0.5 px-2"
+                                        >
+                                    </button>
+                                    <button
+                                            @click="tableFilters.type = 'BNPLFeature'"
+                                            class="md:border-0 md:!border-l  border border-gray-300 hover:bg-gray-100 md:rounded-none rounded-full md:py-2.5 py-2 md:px-4 px-3.5"
+                                            :class="{'bg-gray-100' : (tableFilters.type === 'BNPLFeature')}"
+                                    >
+                                        درگاه‌های اعتباری
+                                        <span
+                                                x-text="getCountGatewaysByType('BNPLFeature')"
+                                                class="bg-primary-50 text-primary-700 rounded-full text-xs py-0.5 px-2"
+                                        >
+                                    </button>
+                                    <button
+                                            @click="tableFilters.type = 'CardToCardFeature'"
+                                            class="md:border-0  border border-gray-300 hover:bg-gray-100 md:rounded-none rounded-full md:py-2.5 py-2 md:px-4 px-3.5"
+                                            :class="{'bg-gray-100' : (tableFilters.type === 'CardToCardFeature')}"
+                                    >
+                                        درگاه‌های کارت به کارت
+                                        <span
+                                                x-text="getCountGatewaysByType('CardToCardFeature')"
+                                                class="bg-primary-50 text-primary-700 rounded-full text-xs py-0.5 px-2"
+                                        >
+                                    </button>
+                                    <!--
+									<button class="md:border-0 border hover:bg-gray-100 md:rounded-none rounded-full md:py-2.5 py-2 md:px-4 px-3.5">
+										پرداخت‌یارها
+									</button>
+									-->
+                                </div>
+                            </template>
                         </div>
 
                         <!--table-->
@@ -255,10 +307,13 @@ wp_localize_script('global-script', 'gateland', [
                                             <td class="py-4 md:px-5 px-3">
                                                 <div class="text-sm text-gray-600">
                                                     <template x-if="row.features.includes('BNPLFeature')">
-                                                        <span x-text="getGatewayTypeLabel('BNPLFeature')"></span>
+                                                        <span class="text-nowrap" x-text="getGatewayTypeLabel('BNPLFeature')"></span>
                                                     </template>
                                                     <template x-if="row.features.includes('ShaparakFeature')">
-                                                        <span x-text="getGatewayTypeLabel('ShaparakFeature')"></span>
+                                                        <span class="text-nowrap" x-text="getGatewayTypeLabel('ShaparakFeature')"></span>
+                                                    </template>
+                                                    <template x-if="row.features.includes('CardToCardFeature')">
+                                                        <span class="text-nowrap" x-text="getGatewayTypeLabel('CardToCardFeature')"></span>
                                                     </template>
                                                 </div>
                                             </td>
@@ -268,17 +323,17 @@ wp_localize_script('global-script', 'gateland', [
                                                         <div class="bg-brand-gold text-gray-900 flex gap-1 items-center text-nowrap rounded-full text-xs px-2 py-1">
                                                             <div class="min-w-4 w-4">
                                                                 <img class="w-full"
-                                                                     src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/special.svg">
+                                                                     src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/special.svg">
                                                             </div>
                                                             <span>گیت‌لند حرفه‌ای</span>
                                                         </div>
                                                     </template>
                                                     <template
-                                                            x-for="item in row.features.filter(feature => (feature !== 'BNPLFeature' && feature !== 'ShaparakFeature' && feature !== 'FreeFeature'))">
+                                                            x-for="item in row.features.filter(feature => (feature !== 'BNPLFeature' && feature !== 'ShaparakFeature' && feature !== 'FreeFeature' && feature !== 'CardToCardFeature'))">
                                                         <div class="bg-blue-50 text-blue-700 flex gap-1 items-center text-nowrap rounded-full text-xs px-2 py-1">
                                                             <div class="min-w-4 w-4">
                                                                 <img class="w-full"
-                                                                     src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/special.svg">
+                                                                     src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/special.svg">
                                                             </div>
                                                             <span x-text="getGatewayTypeLabel(item)"></span>
                                                         </div>
@@ -287,7 +342,7 @@ wp_localize_script('global-script', 'gateland', [
                                                         <div class="bg-blue-50 text-blue-700 flex gap-1 items-center text-nowrap rounded-full text-xs px-2 py-1">
                                                             <div class="min-w-4 w-4">
                                                                 <img class="w-full"
-                                                                     src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/special.svg">
+                                                                     src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/special.svg">
                                                             </div>
                                                             <span>درگاه رایگان</span>
                                                         </div>
@@ -303,7 +358,7 @@ wp_localize_script('global-script', 'gateland', [
                                                                 disabled
                                                                 class="disabled:opacity-70 bg-white flex gap-x-1.5 items-start text-gray-700 text-sm font-semibold text-nowrap border border-gray-300 shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] rounded-[8px] px-4 py-2.5"
                                                         >
-                                                            <img  src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/plus-square.svg">
+                                                            <img  src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/plus-square.svg">
                                                             افزودن درگاه
                                                         </button>
                                                     </template>
@@ -314,7 +369,7 @@ wp_localize_script('global-script', 'gateland', [
                                                                 @click="selectedGateway = row; nextStep()"
                                                                 class="bg-white hover:bg-gray-100 flex gap-x-1.5 items-start text-gray-700 text-sm font-semibold text-nowrap  border border-gray-300 shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] rounded-[8px] px-4 py-2.5"
                                                         >
-                                                            <img  src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/plus-square.svg">
+                                                            <img  src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/plus-square.svg">
                                                             افزودن درگاه
                                                         </button>
                                                     </template>
@@ -333,7 +388,7 @@ wp_localize_script('global-script', 'gateland', [
                     <!-- alert -->
                     <div class="flex gap-3 items-start border border-primary-300 bg-primary-25 rounded-xl text-sm p-4">
                         <img class="w-4 min-w-4"
-                             src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/info-square.svg">
+                             src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/info-square.svg">
                         <div>
                             <div class="font-normal text-primary-700">
                                 اگر درگاه مورد نظرتان در اینجا موجود نیست، کافیست از طریق
@@ -507,7 +562,7 @@ wp_localize_script('global-script', 'gateland', [
                     <!-- alert -->
                     <div class="flex gap-3 items-start border border-primary-300 bg-primary-25 rounded-xl text-sm p-4">
                         <img class="w-4 min-w-4"
-                             src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/info-square.svg">
+                             src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/info-square.svg">
                         <div>
                             <div class="text-primary-700 font-semibold mb-0.5">
                                 اولویت‌بندی درگاه‌ را فراموش نکنید!
@@ -530,7 +585,7 @@ wp_localize_script('global-script', 'gateland', [
                             class="flex items-center gap-2.5 font-semibold text-white hover:text-white bg-primary-500 hover:bg-primary-600 disabled:opacity-50 disabled:cursor-default rounded-lg px-3.5 py-2"
                     >
                         <div class="">
-                            <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/arrow_right.svg">
+                            <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/arrow_right.svg">
                         </div>
                         <span>مرحله قبل</span>
                     </button>
@@ -542,7 +597,7 @@ wp_localize_script('global-script', 'gateland', [
                     >
                         <span>ثبت درگاه</span>
                         <div class="">
-                            <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/arrow_left.svg">
+                            <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/arrow_left.svg">
                         </div>
                     </button>
                 </div>

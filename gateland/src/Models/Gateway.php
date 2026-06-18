@@ -112,6 +112,7 @@ class Gateway extends Model {
 				}
 
 				public function request( Transaction $transaction ): void {
+					throw new \Exception( 'درگاه حذف شده است.' );
 				}
 
 				public function inquiry( Transaction $transaction ): bool {
@@ -140,7 +141,7 @@ class Gateway extends Model {
 		$this->gateway = new $this->class;
 
 		$this->gateway->options = collect( $this->gateway->options() )
-			->pluck( '', 'key' )
+			->pluck( 'default', 'key' )
 			->merge( $this->data )
 			->toArray();
 

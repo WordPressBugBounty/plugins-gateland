@@ -7,18 +7,18 @@ use Nabik\Gateland\Models\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 
-wp_enqueue_style('custom-style', GATELAND_URL . 'dev_assets/css/style.css', [], GATELAND_VERSION);
-wp_enqueue_style('notyf-style', GATELAND_URL . 'dev_assets/css/notyf.min.css', [], GATELAND_VERSION);
-wp_enqueue_style( 'persian-datepicker-style', GATELAND_URL . 'dev_assets/css/persian-datepicker.min.css', [], GATELAND_VERSION );
+wp_enqueue_style('custom-style', GATELAND_URL . 'assets/css/style.css', [], GATELAND_VERSION);
+wp_enqueue_style('notyf-style', GATELAND_URL . 'assets/css/notyf.min.css', [], GATELAND_VERSION);
+wp_enqueue_style( 'persian-datepicker-style', GATELAND_URL . 'assets/css/persian-datepicker.min.css', [], GATELAND_VERSION );
 
-wp_enqueue_script( 'persian-datepicker-script', GATELAND_URL . 'dev_assets/js/persian-datepicker.min.js', ['jquery'], GATELAND_VERSION, true );
-wp_enqueue_script( 'persian-date-script', GATELAND_URL . 'dev_assets/js/persian-date.min.js', ['jquery'], GATELAND_VERSION, true );
-wp_enqueue_script( 'chart-script', GATELAND_URL . 'dev_assets/js/chart.js', [], GATELAND_VERSION, true );
+wp_enqueue_script( 'persian-datepicker-script', GATELAND_URL . 'assets/js/persian-datepicker.min.js', ['jquery'], GATELAND_VERSION, true );
+wp_enqueue_script( 'persian-date-script', GATELAND_URL . 'assets/js/persian-date.min.js', ['jquery'], GATELAND_VERSION, true );
+wp_enqueue_script( 'chart-script', GATELAND_URL . 'assets/js/chart.js', [], GATELAND_VERSION, true );
 
 wp_enqueue_script( 'alpine' );
-wp_enqueue_script('notyf-script', GATELAND_URL . 'dev_assets/js/notyf.min.js', [], GATELAND_VERSION, true);
-wp_enqueue_script('global-script', GATELAND_URL . 'dev_assets/js/global.js', ['notyf-script', 'persian-date-script', 'chart-script'], GATELAND_VERSION, true);
-wp_enqueue_script('page-script', GATELAND_URL . 'dev_assets/js/pages/dashboard.js', [], GATELAND_VERSION, true);
+wp_enqueue_script('notyf-script', GATELAND_URL . 'assets/js/notyf.min.js', [], GATELAND_VERSION, true);
+wp_enqueue_script('global-script', GATELAND_URL . 'assets/js/global.js', ['notyf-script', 'persian-date-script', 'chart-script'], GATELAND_VERSION, true);
+wp_enqueue_script('page-script', GATELAND_URL . 'assets/js/pages/dashboard.js', [], GATELAND_VERSION, true);
 
 wp_localize_script( 'global-script', 'gateland', [
 	'root'  => esc_url_raw( rest_url() ),
@@ -45,7 +45,7 @@ wp_localize_script( 'global-script', 'gateland', [
                                 class="filter-range-date flex items-center border border-gray-300 shadow-[0_1px_2px_0_#1018280D] rounded-lg duration-300 cursor-pointer bg-white hover:bg-primary-50"
                         >
                             <div class="border-l border-gray-300 min-w-9 p-2">
-                                <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/calendar.svg">
+                                <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/calendar.svg">
                             </div>
                             <div class="show-value text-sm font-normal  p-2.5">
                                 <template x-if="!tableFilters.from_date && !tableFilters.to_date">
@@ -162,7 +162,7 @@ wp_localize_script( 'global-script', 'gateland', [
                             <div class="h-full flex flex-col border border-gray-200 rounded-2xl bg-primary-50 md:p-5 p-4">
                                 <div class="flex gap-2 mb-2">
                                     <div class="ml-auto">دریافتی کلی</div>
-                                    <img class="size-6 object-contain" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/coins-stacked.svg">
+                                    <img class="size-6 object-contain" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/coins-stacked.svg">
                                 </div>
                                 <div class="md:text-2xl text-xl mt-auto">
                                     <span x-text="dashboard?.statistics.total_amount"></span>
@@ -173,7 +173,7 @@ wp_localize_script( 'global-script', 'gateland', [
                             <div class="h-full flex flex-col border border-gray-200 rounded-2xl bg-white md:p-5 p-4">
                                 <div class="flex gap-2 mb-2">
                                     <div class="ml-auto">میانگین زمان پرداخت</div>
-                                    <img class="size-6 object-contain" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/speedometer.svg">
+                                    <img class="size-6 object-contain" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/speedometer.svg">
                                 </div>
                                 <div dir="ltr" class="md:text-2xl text-xl text-right mt-auto">
                                     <span x-text="dashboard?.statistics.average_payment_time"></span>
@@ -184,7 +184,7 @@ wp_localize_script( 'global-script', 'gateland', [
                             <div class="h-full flex flex-col border border-gray-200 rounded-2xl bg-primary-50 md:p-5 p-4">
                                 <div class="flex gap-2 mb-2">
                                     <div class="ml-auto">کل تراکنش‌ها</div>
-                                    <img class="size-6 object-contain" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/receipt.svg">
+                                    <img class="size-6 object-contain" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/receipt.svg">
                                 </div>
                                 <div class="md:text-2xl text-xl mt-auto">
                                     <span x-text="dashboard?.statistics.total_transactions"></span>
@@ -195,7 +195,7 @@ wp_localize_script( 'global-script', 'gateland', [
                             <div class="h-full flex flex-col border border-gray-200 rounded-2xl bg-white md:p-5 p-4">
                                 <div class="flex gap-2 mb-2">
                                     <div class="ml-auto">نرخ موفقیت</div>
-                                    <img class="size-6 object-contain" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/receipt-check.svg">
+                                    <img class="size-6 object-contain" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/receipt-check.svg">
                                 </div>
                                 <div class="md:text-2xl text-xl mt-auto">
                                     %
@@ -541,7 +541,7 @@ wp_localize_script( 'global-script', 'gateland', [
                                                 :href="`?page=gateland-transaction&transaction_id=${row.id}`"
                                                 class="size-7 flex items-center justify-center rounded hover:shadow hover:bg-success-100"
                                         >
-                                            <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/eye.svg">
+                                            <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/eye.svg">
                                         </a>
                                     </div>
                                 </td>
@@ -559,7 +559,7 @@ wp_localize_script( 'global-script', 'gateland', [
                     <div class="mb-3">
                         <div class="size-12 flex items-center justify-center bg-primary-50 rounded-full mx-auto">
                             <div class="size-9 flex items-center justify-center bg-primary-100 rounded-full">
-                                <img class="size-5" src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/search-blue.svg">
+                                <img class="size-5" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/search-blue.svg">
                             </div>
                         </div>
                     </div>
@@ -590,7 +590,7 @@ wp_localize_script( 'global-script', 'gateland', [
                             class="sm:size-7 size-6 flex items-center justify-center border border-gray-200 hover:bg-gray-100 rounded-md rotate-180 disabled:opacity-50"
                             :disabled="((pagination.totalPage - (pagination.totalPage - 1)) === pagination.currentPage)"
                     >
-                        <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/perv.svg">
+                        <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/perv.svg">
                     </button>
 
                     <template x-for="(pageNumber, index) in pagination.items">
@@ -616,7 +616,7 @@ wp_localize_script( 'global-script', 'gateland', [
                             class="sm:size-7 size-6 flex items-center justify-center border border-gray-200 hover:bg-gray-100 rounded-md disabled:opacity-50"
                             :disabled="(pagination.totalPage === pagination.currentPage)"
                     >
-                        <img src="<?php echo GATELAND_URL . 'dev_assets'; ?>/image/icons/perv.svg">
+                        <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/perv.svg">
                     </button>
 
                 </div>

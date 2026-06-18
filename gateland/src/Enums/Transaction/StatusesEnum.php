@@ -26,18 +26,4 @@ class StatusesEnum extends EnumBase {
 		return $values[ $this->value ];
 	}
 
-	/**
-	 * @return string
-	 */
-	public function style(): string {
-		$values = [
-			self::STATUS_PENDING => 'color: #F87F06',
-			self::STATUS_FAILED  => 'color: #DF2040',
-			self::STATUS_PAID    => 'color: #297A44',
-			self::STATUS_REFUND  => 'color: #004FA3',
-		];
-
-		return $values[ $this->value ];
-	}
-
 }

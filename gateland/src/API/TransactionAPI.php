@@ -10,7 +10,7 @@ use Nabik\Gateland\Models\Gateway;
 use Nabik\Gateland\Models\Transaction;
 use Nabik\Gateland\Services\GatewayService;
 use Nabik\Gateland\Services\TransactionService;
-use Nabik\GatelandPro\Services\ExcelService;
+use Nabik\GatelandPro\Exports\TransactionExport;
 use Rakit\Validation\Validator;
 use WP_REST_Request;
 
@@ -215,7 +215,7 @@ class TransactionAPI extends RestAPI {
 
 		if ( $export ) {
 
-			if ( ! class_exists( ExcelService::class ) ) {
+			if ( ! class_exists( TransactionExport::class ) ) {
 				wp_die( 'جهت دریافت خروجی اکسل، گیت‌لند حرفه‌ای را نصب و فعال نمایید.' );
 			}
 
@@ -237,7 +237,7 @@ class TransactionAPI extends RestAPI {
 				'max_amount'
 			);
 
-			Excelservice::export( $transactions->limit( 1000 )->get(), $filters );
+			TransactionExport::excel( $transactions->limit( 1000 )->get(), $filters );
 		}
 
 		$statuses = $transactions->clone()
@@ -273,8 +273,6 @@ class TransactionAPI extends RestAPI {
 			self::response( false, $e->getMessage() );
 		}
 
-		$status = StatusesEnum::tryFrom( $transaction->status );
-
 		$gateway_features = [];
 
 		if ( $transaction->gateway ) {
@@ -289,7 +287,7 @@ class TransactionAPI extends RestAPI {
 				'مبلغ'          => CurrenciesEnum::tryFrom( $transaction->currency )->price( $transaction->refund->amount ),
 				'شناسه استرداد' => $transaction->refund->refund_id,
 				'توضیحات'       => $transaction->refund->description,
-				'شناسه کاربر'   => $transaction->refund->user_id,
+				'شناسه کاربر'   => get_userdata( $transaction->refund->user_id )->display_name,
 			];
 
 			$refunded_at = Helper::date( $transaction->refund->created_at );
@@ -299,8 +297,7 @@ class TransactionAPI extends RestAPI {
 			'id'               => $transaction->id,
 			'amount'           => $transaction->amount,
 			'currency'         => CurrenciesEnum::tryFrom( $transaction->currency )->symbol(),
-			'status'           => $status->name(),
-			'status_style'     => $status->style(),
+			'status'           => $transaction->status,
 			'gateway'          => $transaction->gateway_label,
 			'created_at'       => Helper::date( $transaction->created_at ),
 			'paid_at'          => $transaction->paid_at ? Helper::date( $transaction->paid_at ) : null,
@@ -310,13 +307,17 @@ class TransactionAPI extends RestAPI {
 			'meta'             => [
 				'توضیحات'      => $transaction->description,
 				'شناسه سفارش'  => $transaction->order_id,
-				'ip'           => $transaction->ip,
+				'آدرس آی.پی'   => $transaction->ip,
 				'شناسه پیگیری' => $transaction->gateway_trans_id,
 				'وضعیت درگاه'  => $transaction->gateway_status,
 				'شناسه پرداخت' => $transaction->gateway_au,
 				'شماره کارت'   => $transaction->card_number,
 				'تلفن همراه'   => $transaction->mobile,
 				'پذیرنده'      => $transaction->client_label,
+			],
+			'order'            => [
+				'url' => $transaction->getClientOrderUrl(),
+				'id'  => $transaction->order_id,
 			],
 			'refund_meta'      => $refund_meta,
 			'refunded_at'      => $refunded_at,

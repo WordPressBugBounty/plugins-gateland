@@ -3,12 +3,14 @@
 namespace Nabik\Gateland;
 
 use Illuminate\Database\Schema\Blueprint;
+use Nabik\Gateland\Models\Card;
 use Nabik\Gateland\Models\Gateway;
+use Nabik\Gateland\Models\Transaction;
 use Nabik_Net_Database;
 
 defined( 'ABSPATH' ) || exit;
 
-class Install extends \Nabik_Net_Install {
+class Install extends \Nabik\Utils\V1\Install {
 
 	public function tasks() {
 		self::create_tables();
@@ -93,6 +95,41 @@ class Install extends \Nabik_Net_Install {
 				$table->foreignId( 'transaction_id' );
 				$table->foreignId( 'user_id' )->nullable();
 				$table->timestamp( 'created_at' );
+			} );
+
+		}
+
+		if ( ! Nabik_Net_Database::Schema()->hasTable( 'gateland_cards' ) ) {
+
+			Nabik_Net_Database::Schema()->create( 'gateland_cards', function ( Blueprint $table ) {
+				$table->id();
+				$table->string( 'name' );
+				$table->string( 'card_number' )->unique();
+				$table->string( 'status' );
+				$table->integer( 'max_quantity' )->nullable();
+				$table->integer( 'max_amount' )->nullable();
+				$table->boolean( 'is_failover' );
+				$table->timestamps();
+			} );
+
+		}
+
+		if ( ! Nabik_Net_Database::Schema()->hasTable( 'gateland_receipts' ) ) {
+
+			Nabik_Net_Database::Schema()->create( 'gateland_receipts', function ( Blueprint $table ) {
+				$table->id();
+				$table->foreignIdFor( Transaction::class );
+				$table->foreignIdFor( Card::class );
+				$table->foreignId( 'attachment_id' );
+				$table->string( 'card_number' )->nullable();
+				$table->string( 'tracking_number' )->nullable();
+				$table->integer( 'amount' );
+				$table->integer( 'accepted_amount' )->nullable();
+				$table->string( 'status' )->default( 'pending' );
+				$table->foreignId( 'reviewed_by' )->nullable();
+				$table->json( 'meta' )->nullable();
+				$table->timestamps();
+				$table->timestamp( 'reviewed_at' )->nullable();
 			} );
 
 		}

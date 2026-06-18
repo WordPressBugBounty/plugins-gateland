@@ -6,9 +6,10 @@ namespace Nabik\Gateland\Gateways;
 
 use Nabik\Gateland\Enums\Transaction\CurrenciesEnum;
 use Nabik\Gateland\Gateways\Features\BNPLFeature;
+use Nabik\Gateland\Gateways\Features\InquiryFeature;
 use Nabik\Gateland\Models\Transaction;
 
-class TaraGateway extends BaseGateway implements BNPLFeature {
+class TaraGateway extends BaseGateway implements BNPLFeature, InquiryFeature {
 
 	protected string $name = 'تارا';
 

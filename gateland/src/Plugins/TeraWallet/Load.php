@@ -65,7 +65,6 @@ class Load {
 			'user_id'    => $customer->get_id(),
 			'type'       => 'credit',
 			'amount'     => $amount,
-			'balance'    => 0,
 			'currency'   => $currency,
 			'details'    => '',
 			'deleted'    => 1,
@@ -176,7 +175,6 @@ class Load {
 			                   ->table( 'woo_wallet_transactions' )
 			                   ->where( 'transaction_id', $transaction_id )
 			                   ->update( [
-				                   'balance' => $balance,
 				                   'details' => sprintf( __( 'کیف‌پول از طریق تراکنش #%s شارژ شد.', 'gateland' ), $authority ),
 				                   'deleted' => 0,
 			                   ] );

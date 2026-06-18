@@ -41,12 +41,12 @@ class Helper {
 	}
 
 	/**
-	 * @param $dateTime
-	 * @param $format
+	 * @param string $dateTime
+	 * @param string $format
 	 *
 	 * @return false|string
 	 */
-	public static function date( $dateTime, $format = 'Y/m/d H:i:s' ) {
+	public static function date( string $dateTime, string $format = 'Y/m/d H:i:s' ) {
 		return wp_date( $format, strtotime( $dateTime ) );
 	}
 

@@ -178,11 +178,11 @@ class Gateway extends WC_Payment_Gateway {
 			$amount *= 1000;
 		}
 
-		if ( $amount > 200000000 ) {
+		if ( $amount > 400_000_000 ) {
 
 			if ( ! class_exists( Loan::class ) ) {
 
-				$message = 'جهت پرداخت مبالغ بالای ۲۰۰ میلیون تومان، افزونه قسطی‌پی را نصب و فعال نمایید.';
+				$message = 'جهت پرداخت مبالغ بالای ۴۰۰ میلیون تومان، افزونه قسطی‌پی را نصب و فعال نمایید.';
 
 				wc_add_notice( $message, 'error' );
 
@@ -208,7 +208,7 @@ class Gateway extends WC_Payment_Gateway {
 			$loan->installments()->create( [
 				'user_id'  => $loan_data['user_id'],
 				'status'   => Installment::STATUS_PENDING,
-				'amount'   => 200000000,
+				'amount'   => 400_000_000,
 				'due_date' => verta()->setTimezone( wp_timezone() )->endDay()->toCarbon()->utc(),
 			] );
 
@@ -223,7 +223,7 @@ class Gateway extends WC_Payment_Gateway {
 				$loan->installments()->create( [
 					'user_id'  => $loan_data['user_id'],
 					'status'   => Installment::STATUS_WAITING,
-					'amount'   => min( 200000000, $loan->amount - $created_amount ),
+					'amount'   => min( 400_000_000, $loan->amount - $created_amount ),
 					'due_date' => $next_payment_date->endDay()->toCarbon()->utc(),
 				] );
 

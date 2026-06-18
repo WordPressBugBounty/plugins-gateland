@@ -101,7 +101,9 @@ abstract class BaseGateway {
 	}
 
 	public function cancelled( Transaction $transaction, $status = null ): bool {
-		$this->log( $transaction, 'verifyCancelled' );
+		$this->log( $transaction, 'verifyCancelled', [
+			'status' => $status,
+		] );
 
 		$transaction->update( [
 			'gateway_status' => $status,

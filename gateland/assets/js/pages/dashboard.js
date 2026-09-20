@@ -99,7 +99,7 @@ document.addEventListener('alpine:init', () => {
                             )
                             break;
                         }
-                        case 'failed': {
+                        case 'pending': {
                             this.chartTransactionsStatusData.push(
                                 {
                                     label: 'در انتظار پرداخت',
@@ -109,7 +109,7 @@ document.addEventListener('alpine:init', () => {
                             )
                             break;
                         }
-                        case 'pending': {
+                        case 'failed': {
                             this.chartTransactionsStatusData.push(
                                 {
                                     label: 'ناموفق',

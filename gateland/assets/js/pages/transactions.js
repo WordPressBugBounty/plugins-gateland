@@ -118,9 +118,15 @@ document.addEventListener('alpine:init', () => {
                             totalPage: parseInt((data.total_items / this. tableFilters.per_page)) + 1
                         })
                     }
+
+                    let totalCount = 0;
+                    data.statuses.forEach(status=>{
+                        totalCount += status.count;
+                    })
+
                     data.statuses.push( {
                         status: "all",
-                        count: data.total_items,
+                        count: totalCount,
                     })
                     this.statuses = data.statuses;
                 }else{

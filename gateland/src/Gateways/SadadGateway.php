@@ -68,7 +68,7 @@ class SadadGateway extends BaseGateway implements InquiryFeature, ShaparakFeatur
 	/**
 	 * @throws Exception
 	 */
-	public function sadadCurl( string $url, $data = null ): array {
+	public function sadadCurl( string $url, string $data ): array {
 		$curl = curl_init( $url );
 
 		curl_setopt( $curl, CURLOPT_CUSTOMREQUEST, 'POST' );

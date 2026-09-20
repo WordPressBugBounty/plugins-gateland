@@ -26,8 +26,6 @@ class AsanPardakhtGateway extends BaseGateway implements \Nabik\Gateland\Gateway
 			'transaction' => $transaction->toArray(),
 		] );
 
-		$this->checkAmount( $transaction, 1100, 100000000 );
-
 		$parameters = [
 			'merchantConfigurationId' => $this->options['merchant'],
 			'serviceTypeId'           => 1,
@@ -290,7 +288,7 @@ class AsanPardakhtGateway extends BaseGateway implements \Nabik\Gateland\Gateway
 	/**
 	 * @throws Exception
 	 */
-	public function AsanPardakhtCurl( string $url, array $data = null ) {
+	public function AsanPardakhtCurl( string $url, ?array $data = null ) {
 		$curl = curl_init( $url );
 
 		curl_setopt( $curl, CURLOPT_POST, 1 );

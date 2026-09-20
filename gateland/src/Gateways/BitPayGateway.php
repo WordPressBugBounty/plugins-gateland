@@ -164,7 +164,10 @@ class BitPayGateway extends BaseGateway implements \Nabik\Gateland\Gateways\Feat
 		return $messages[ $errorCode ] ?? 'خطا غیرمنتظره! لطفا با مدیر وب سایت تماس بگیرید.';
 	}
 
-	public function BitPayCurl( string $url, $data = null ): int {
+	/**
+	 * @throws Exception
+	 */
+	public function BitPayCurl( string $url, array $data ): int {
 		$curl = curl_init( $url );
 
 		curl_setopt( $curl, CURLOPT_CUSTOMREQUEST, 'POST' );

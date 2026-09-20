@@ -32,12 +32,13 @@ class NeoGateGateway extends BaseGateway implements \Nabik\Gateland\Gateways\Fea
 		] );
 
 		$parameters = [
-			'amount'      => intval( $transaction->amount * 10 ),
-			'merchant'    => $this->options['merchant'],
-			'order_id'    => $transaction->id,
-			'mobile'      => $transaction->mobile,
-			'callback'    => $transaction->gateway_callback,
-			'description' => $transaction->description,
+			'amount'          => intval( $transaction->amount * 10 ),
+			'merchant'        => $this->options['merchant'],
+			'order_id'        => $transaction->id,
+			'mobile'          => $transaction->mobile,
+			'callback'        => $transaction->gateway_callback,
+			'description'     => $transaction->description,
+			'expiration_time' => $this->options['expiration_time'] ?? null,
 		];
 
 		$headers = [
@@ -64,10 +65,10 @@ class NeoGateGateway extends BaseGateway implements \Nabik\Gateland\Gateways\Fea
 			throw new Exception( 'خطا در اتصال به درگاه! لطفا دوباره تلاش کنید.' );
 		}
 
-		if ( isset( $response['data']['authority'] ) ) {
+		if ( isset( $response['data']['token'] ) ) {
 
 			$transaction->update( [
-				'gateway_au' => $response['data']['authority'],
+				'gateway_au' => $response['data']['token'],
 			] );
 
 			return;
@@ -89,10 +90,9 @@ class NeoGateGateway extends BaseGateway implements \Nabik\Gateland\Gateways\Fea
 		] );
 
 		$parameters = [
-			'merchant'  => $this->options['merchant'],
-			'authority' => $transaction->gateway_au,
+			'merchant' => $this->options['merchant'],
+			'token'    => $transaction->gateway_au,
 		];
-
 
 		$headers = [
 			'Accept: application/json',
@@ -117,12 +117,18 @@ class NeoGateGateway extends BaseGateway implements \Nabik\Gateland\Gateways\Fea
 			throw new VerifyException();
 		}
 
-		if ( $response['data']['status'] == 'paid' ) {
+		$status = $response['data']['status'];
+
+		if ( $status == 'pending' ) {
+			throw new VerifyException( 'تراکنش کارت به کارت تعیین وضعیت نشده است.' );
+		}
+
+		if ( $status == 'paid' ) {
 			$this->log( $transaction, 'verifySuccess' );
 
 			$transaction->update( [
 				'gateway_trans_id' => $response['data']['ref_number'],
-				'gateway_status'   => $response['data']['status'],
+				'gateway_status'   => $status,
 				'status'           => StatusesEnum::STATUS_PAID,
 				'card_number'      => $response['data']['card_number'],
 				'paid_at'          => \Carbon\Carbon::now(),
@@ -131,7 +137,7 @@ class NeoGateGateway extends BaseGateway implements \Nabik\Gateland\Gateways\Fea
 			return true;
 		}
 
-		throw new InquiryException( $response['data']['status'] );
+		throw new InquiryException( $status );
 	}
 
 	public function redirect( Transaction $transaction ) {
@@ -159,6 +165,11 @@ class NeoGateGateway extends BaseGateway implements \Nabik\Gateland\Gateways\Fea
 				'label'       => 'مرچنت',
 				'key'         => 'merchant',
 				'description' => 'مرچنت از منو پذیرنده ها در app.neogate.ir قابل دریافت است.',
+			],
+			[
+				'label'       => 'مهلت کارت به کارت (دقیقه)',
+				'key'         => 'expiration_time',
+				'description' => 'پیشفرض ۳۰ دقیقه است.',
 			],
 		];
 	}

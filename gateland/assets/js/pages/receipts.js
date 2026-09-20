@@ -119,11 +119,6 @@ document.addEventListener('alpine:init', () => {
                 if(result.success) {
                     const data = result.data;
                     this.tableData = data.receipts;
-                    this.statuses = data.statuses;
-                    data.statuses.push( {
-                        status: "all",
-                        count: data.total_items,
-                    })
                     this.pagination = {
                         currentPage: data.current_page,
                         totalPage: parseInt((data.total_items / this. tableFilters.per_page)) + 1,
@@ -132,6 +127,18 @@ document.addEventListener('alpine:init', () => {
                             totalPage: parseInt((data.total_items / this. tableFilters.per_page)) + 1
                         })
                     }
+
+                    let totalCount = 0;
+                    data.statuses.forEach(status=>{
+                        totalCount += status.count;
+                    })
+
+                    data.statuses.push( {
+                        status: "all",
+                        count: totalCount,
+                    })
+
+                    this.statuses = data.statuses;
                 }
 
                 this.tableLoaderIsActive = false;
@@ -157,7 +164,7 @@ document.addEventListener('alpine:init', () => {
                     this.filters.destination_cards = result.data.destination_cards.map((card)=>{
                         return{
                             key: card.id.toString(),
-                            value: card.formatted_card_number
+                            value: card.iban ? 'IR' + gatelandFormatIban(card.iban) : gatelandFormatCardNumber(card.card_number)
                         }
                     });
                 }else{

@@ -112,7 +112,7 @@ wp_localize_script( 'global-script', 'gateland', [
                         </div>
                         <div class="xl:col-span-2 sm:col-span-6 col-span-full">
                             <div>
-                                <label class="block text-sm mb-2">شماره کارت مقصد</label>
+                                <label class="block text-sm mb-2">شماره کارت یا شبا مقصد</label>
                                 <div class="gap-1 border border-gray-300 shadow-[0_1px_2px_0_#1018280D] bg-white rounded-lg">
                                     <!-- dropdown-->
                                     <div
@@ -126,7 +126,7 @@ wp_localize_script( 'global-script', 'gateland', [
                                                 class="flex items-center gap-2 cursor-pointer py-2 px-3"
                                         >
                                             <template x-if="tableFilters.destination_card_id">
-                                                <div class="flex items-center gap-2 w-full">
+                                                <div class="flex items-center gap-2 w-[calc(100%-20px)]">
                                                     <div
                                                             x-text="filters.destination_cards.filter(item=>item.key === tableFilters.destination_card_id)[0]?.value"
                                                             class="min-w-10 line-clamp-1">
@@ -145,7 +145,7 @@ wp_localize_script( 'global-script', 'gateland', [
                                             </template>
                                             <template x-if="!tableFilters.destination_card_id">
                                                 <div class="min-w-10 line-clamp-1">
-                                                    انتخاب شماره کارت مقصد
+                                                    انتخاب کنید
                                                 </div>
                                             </template>
                                             <div
@@ -160,7 +160,7 @@ wp_localize_script( 'global-script', 'gateland', [
 
                                         <!-- dropdown items-->
                                         <div
-                                                class="max-h-0 w-[calc(100%+2px)] absolute z-[1] top-[calc(100%+4px)] -left-[1px] border border-gray-200 border-opacity-0 rounded overflow-auto custom-scrollbar duration-300"
+                                                class="max-h-0 xl:w-[calc(120%+2px)] w-[calc(100%+2px)] absolute z-[1] top-[calc(100%+4px)] -right-[1px] border border-gray-200 border-opacity-0 rounded overflow-auto custom-scrollbar duration-300"
                                                 :class="{'!max-h-40 !border-opacity-100 shadow bg-white z-[2]' : open}"
                                         >
                                             <div class="bg-white pt-0.5">
@@ -170,7 +170,9 @@ wp_localize_script( 'global-script', 'gateland', [
                                                             class="flex gap-2 items-center cursor-pointer hover:text-primary-300 duration-300 p-1.5 mx-1"
                                                             :class="{'border-b' : (index+1 !=  filters.destination_cards.length)}"
                                                     >
-                                                        <span x-text="item.value"></span>
+                                                        <div class="text-sm">
+                                                            <span x-text="item.value"></span>
+                                                        </div>
                                                         <div
                                                                 class="text-primary-300 mr-auto"
                                                                 :class="{'opacity-0': tableFilters.destination_card_id !== item.key }"
@@ -320,7 +322,7 @@ wp_localize_script( 'global-script', 'gateland', [
 						<div class="inline-flex md:gap-0 gap-2 max-w-full md:border md:rounded-[8px] text-sm text-nowrap font-semibold md:overflow-hidden overflow-auto hidden-scrollbar">
 
 							<button
-								@click="tableFilters.status = null; getReceipts()"
+								@click="tableFilters.status = null; getPageData()"
 								class="flex items-center gap-2 md:border-0 md:!border-l border border-gray-300 bg-gray-100 hover:bg-gray-50 md:rounded-none rounded-full md:py-2.5 py-2 md:px-4 px-3.5"
 								:class="{'bg-gray-100' : (tableFilters.status === null)}"
 							>
@@ -334,7 +336,7 @@ wp_localize_script( 'global-script', 'gateland', [
 
 							<template x-for="(item, index) in filters.statuses">
 								<button
-									@click="tableFilters.status = item.key; getReceipts()"
+									@click="tableFilters.status = item.key; getPageData()"
 									class="flex items-center gap-2 md:border-0  border border-gray-300 hover:bg-gray-100 md:rounded-none rounded-full md:py-2.5 py-2 md:px-4 px-3.5"
 									:class="{'md:!border-l': (index < filters.statuses.length -1), 'bg-gray-100' : (tableFilters.status === item.key)}"
 								>
@@ -605,7 +607,7 @@ wp_localize_script( 'global-script', 'gateland', [
                             </div>
                             <div class="md:col-span-6 col-span-full">
                                 <div>
-                                    <label class="block text-sm mb-2">شماره کارت مقصد</label>
+                                    <label class="block text-sm mb-2">شماره کارت یا شبا مقصد</label>
                                     <div class="gap-1 border border-gray-300 shadow-[0_1px_2px_0_#1018280D] bg-white rounded-lg">
                                         <!-- dropdown-->
                                         <div
@@ -619,7 +621,7 @@ wp_localize_script( 'global-script', 'gateland', [
                                                     class="flex items-center gap-2 cursor-pointer py-2 px-3"
                                             >
                                                 <template x-if="tableFilters.destination_card_id">
-                                                    <div class="flex items-center gap-2 w-full">
+                                                    <div class="flex items-center gap-2 w-[calc(100%-20px)]">
                                                         <div
                                                                 x-text="filters.destination_cards.filter(item=>item.key === tableFilters.destination_card_id)[0]?.value"
                                                                 class="min-w-10 line-clamp-1">
@@ -638,7 +640,7 @@ wp_localize_script( 'global-script', 'gateland', [
                                                 </template>
                                                 <template x-if="!tableFilters.destination_card_id">
                                                     <div class="min-w-10 line-clamp-1">
-                                                        انتخاب شماره کارت مقصد
+                                                        انتخاب کنید
                                                     </div>
                                                 </template>
                                                 <div

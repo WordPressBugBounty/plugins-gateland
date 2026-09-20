@@ -187,7 +187,7 @@ abstract class BaseGateway {
 		return $this->slug() . '::' . $event;
 	}
 
-	public function log( Transaction $transaction, string $event, array $data = null ): void {
+	public function log( Transaction $transaction, string $event, ?array $data = null ): void {
 
 		$transaction->logs()->create( [
 			'event' => $this->event( $event ),

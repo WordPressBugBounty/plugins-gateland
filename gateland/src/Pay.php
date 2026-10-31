@@ -9,6 +9,7 @@ use Nabik\Gateland\Enums\Transaction\StatusesEnum as TransactionStatusesEnum;
 use Nabik\Gateland\Exceptions\ValidationErrorException;
 use Nabik\Gateland\Exceptions\VerifyException;
 use Nabik\Gateland\Gateways\Features\ShaparakFeature;
+use Nabik\Gateland\Helpers\IP;
 use Nabik\Gateland\Helpers\SQID;
 use Nabik\Gateland\Models\Gateway;
 use Nabik\Gateland\Models\Transaction;
@@ -132,7 +133,7 @@ class Pay {
 			try {
 				$reader = new Reader( GATELAND_PRO_DIR . '/assets/ip.mmdb' );
 
-				$user_id = Helper::get_real_ip();
+				$user_id = IP::get();
 				$data    = $reader->get( $user_id );
 				$country = $data['country']['iso_code'] ?? null;
 
@@ -218,7 +219,7 @@ class Pay {
 
 				$transaction->update( [
 					'gateway_id' => $gateway->id,
-					'ip'         => Helper::get_real_ip(),
+					'ip'         => IP::get(),
 				] );
 
 				break;

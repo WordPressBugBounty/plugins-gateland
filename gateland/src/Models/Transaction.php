@@ -158,9 +158,9 @@ class Transaction extends Model {
 	// Functions
 
 	public function getClientLabelAttribute(): string {
-		$clients = $this->getClients();
+		$client_label = $this->getClients()[ $this->client ] ?? $this->client;
 
-		return $clients[ $this->client ] ?? $this->client;
+		return apply_filters( 'nabik/gateland/transaction_client_label', $client_label, $this );
 	}
 
 	public function getGatewayLabelAttribute(): string {
@@ -318,7 +318,7 @@ class Transaction extends Model {
 	}
 
 	public function getPrettyPayURL(): string {
-		return site_url( Gateland::get_pay_url_prefix() . '/' . $this->token );
+		return home_url( Gateland::get_pay_url_prefix() . '/' . $this->token );
 	}
 
 	// Relations

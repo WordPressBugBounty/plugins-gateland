@@ -176,23 +176,36 @@ defined( 'ABSPATH' ) || exit;
                                <div class="lg:bg-white h-full lg:py-5 lg:px-8">
                                   <div>
                                       <div class="lg:block flex items-center gap-2 text-center lg:bg-[linear-gradient(180deg,#F0F7FF_0%,#FFFFFF_100%)] bg-white border lg:border-[#DDE7FF] lg:rounded-2xl rounded-xl lg:p-5 p-3 lg:mb-6 mb-[198px]">
-                                          <div class="text-gray-600 text-sm lg:mb-1">مبلغ قابل پرداخت</div>
+                                          <div class="text-gray-600 text-sm lg:mb-1">
+                                              <span x-show="!pageDetails?.total_accepted_amount">مبلغ قابل پرداخت </span>
+                                              <span x-show="pageDetails?.total_accepted_amount">مبلغ باقی مانده قابل پرداخت </span>
+                                          </div>
                                           <div class="flex items-center justify-center gap-2 lg:mr-0 mr-auto lg:mb-1">
                                               <div class="font-semibold">
-                                                  <span class="lg:text-[24px]" x-text="gatelandFormatPrice(pageDetails?.amount)"></span>
+                                                  <template x-if="!pageDetails?.total_accepted_amount">
+                                                      <span class="lg:text-[24px]" x-text="gatelandFormatPrice(pageDetails?.amount)"></span>
+                                                  </template>
+                                                  <template x-if="pageDetails?.total_accepted_amount">
+                                                      <span class="lg:text-[24px]" x-text="gatelandFormatPrice(pageDetails?.amount - pageDetails?.total_accepted_amount)"></span>
+                                                  </template>
                                                   <span class="lg:text-base text-sm" x-text="pageDetails?.currency"></span>
                                               </div>
                                               <button
                                                       @click="gatelandCopyToClipboard($el, 'مبلغ قابل پرداخت')"
-                                                      :data-copy="pageDetails?.amount"
+                                                      :data-copy="!pageDetails?.total_accepted_amount ? (pageDetails?.amount) : (pageDetails?.amount - pageDetails?.total_accepted_amount)"
                                                       class="lg:flex hidden items-center justify-center gap-1.5 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 px-2.5 py-1.5"
                                               >
                                                   <img class="w-[18px] min-w-[18px]" src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/copy-gray.svg">
                                                   <span class="text-copy text-xs">کپی</span>
                                               </button>
                                           </div>
-                                          <div class="hidden text-gray-500 font-normal">
-                                              معادل ۱۲٬۰۰۰٬۰۰۰ تومان
+                                          <div class="xl:block hidden text-gray-500 font-normal text-xs">
+                                              <template x-if="!pageDetails?.total_accepted_amount">
+                                                  <span x-text="gatelandConvertPriceToWords(pageDetails?.amount, pageDetails?.currency)"></span>
+                                              </template>
+                                              <template x-if="pageDetails?.total_accepted_amount">
+                                                  <span x-text="gatelandConvertPriceToWords((pageDetails?.amount - pageDetails?.total_accepted_amount), pageDetails?.currency)"></span>
+                                              </template>
                                           </div>
                                       </div>
                                       <div class="bg-white lg:border-0 border border-[#E6E9F0] lg:rounded-none rounded-xl lg:p-0 p-4 lg:mb-0 mb-3">

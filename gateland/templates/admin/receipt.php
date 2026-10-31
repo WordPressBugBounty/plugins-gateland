@@ -383,7 +383,14 @@ wp_localize_script( 'global-script', 'gateland', [
                                                         </div>
                                                         <div class="flex items-center gap-2 md:flex-nowrap flex-wrap">
                                                             <div class="font-medium text-primary-700">
-                                                                <span x-text="receipt.source_card.card_number"></span>
+                                                                <template x-if="receipt.source_card.card_number.length === 24">
+                                                                    <span x-text="'IR' + gatelandFormatIban(receipt.source_card.card_number)"></span>
+                                                                </template>
+                                                                <template x-if="receipt.source_card.card_number.length === 16">
+                                                                    <span x-text="gatelandFormatCardNumber(receipt.source_card.card_number)"></span>
+                                                                </template>
+                                                                |
+                                                                <span x-text="receipt.source_card.name"></span>
                                                             </div>
                                                             <template x-if="!receipt.source_card.name">
                                                                 <button
@@ -394,8 +401,8 @@ wp_localize_script( 'global-script', 'gateland', [
                                                                     <span
                                                                             :class="{'rotation-animation' : inquiryLoaderIsActive}"
                                                                     >
-                                                    <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/refresh-blue.svg">
-                                                </span>
+                                                                    <img src="<?php echo GATELAND_URL . 'assets'; ?>/images/icons/refresh-blue.svg">
+                                                                </span>
                                                                 </button>
                                                             </template>
                                                             <template x-if="receipt.source_card.name">
@@ -664,7 +671,7 @@ wp_localize_script( 'global-script', 'gateland', [
                                     </div>
                                     <template x-if="modals.accept.data.amount.value">
                                         <div class="block text-xs text-gray-600 my-1.5 empty:my-0">
-                                            <span x-text="gatelandConvertPriceToWords(gatelandPriceToNumber(gatelandFormatPrice(modals.accept.data.amount.value)))"></span>
+                                            <span x-text="gatelandConvertPriceToWords(gatelandPriceToNumber(gatelandFormatPrice(modals.accept.data.amount.value)), receipt.currency)"></span>
                                         </div>
                                     </template>
                                     <!--error msg-->

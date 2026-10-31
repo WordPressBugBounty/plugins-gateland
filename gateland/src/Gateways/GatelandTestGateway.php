@@ -2,12 +2,12 @@
 
 namespace Nabik\Gateland\Gateways;
 
-use Exception;
 use Nabik\Gateland\Enums\Transaction\CurrenciesEnum;
 use Nabik\Gateland\Enums\Transaction\StatusesEnum;
 use Nabik\Gateland\Exceptions\InquiryException;
+use Nabik\Gateland\Exceptions\VerifyException;
 use Nabik\Gateland\Gateways\Features\FreeFeature;
-use Nabik\Gateland\Helper;
+use Nabik\Gateland\Helpers\IP;
 use Nabik\Gateland\Models\Transaction;
 
 class GatelandTestGateway extends BaseGateway implements FreeFeature {
@@ -29,16 +29,7 @@ class GatelandTestGateway extends BaseGateway implements FreeFeature {
 			'transaction' => $transaction->toArray(),
 		] );
 
-		$is_admin = current_user_can( 'manage_options' );
-
-		$ip         = Helper::get_real_ip();
-		$allowed_ip = explode( ',', $this->options['allowed_ip'] ?? '' );
-
-		$allowed_ip[] = '127.0.0.1';
-
-		if ( ! in_array( $ip, $allowed_ip ) && ! $is_admin ) {
-			throw new Exception( sprintf( 'پرداخت تست صرفا از آی.پی (های) %s مجاز است.', esc_html( $this->options['allowed_ip'] ?? '' ) ) );
-		}
+		$this->check_access();
 
 		$transaction->update( [
 			'gateway_au' => $transaction->id . rand( 100, 999 ),
@@ -49,6 +40,8 @@ class GatelandTestGateway extends BaseGateway implements FreeFeature {
 		$this->log( $transaction, 'inquiry', [
 			'transaction' => $transaction->toArray(),
 		] );
+
+		$this->check_access();
 
 		$is_paid = intval( $_GET['is_paid'] ?? 0 );
 
@@ -84,6 +77,23 @@ class GatelandTestGateway extends BaseGateway implements FreeFeature {
 	}
 
 	/**
+	 * @throws VerifyException
+	 */
+	private function check_access(): void {
+
+		if ( current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$allowed_ips = explode( ',', $this->options['allowed_ip'] ?? '' );
+		$allowed_ips = array_filter( array_map( 'trim', $allowed_ips ) );
+
+		if ( ! in_array( IP::get(), $allowed_ips, true ) ) {
+			throw new VerifyException( 'پرداخت تست صرفا توسط مدیر سایت یا از آی.پی‌های مجاز امکان‌پذیر است.' );
+		}
+	}
+
+	/**
 	 * @return CurrenciesEnum[]
 	 */
 	public function currencies(): array {
@@ -103,7 +113,7 @@ class GatelandTestGateway extends BaseGateway implements FreeFeature {
 			[
 				'label'       => 'آی.پی‌های مجاز',
 				'key'         => 'allowed_ip',
-				'description' => 'درگاه پرداخت تست صرفا توسط مدیر سایت یا از آی.پی‌های بالا (جدا شده با کاما) قابل استفاده است. آی.پی فعلی شما: ' . Helper::get_real_ip(),
+				'description' => 'درگاه پرداخت تست صرفا توسط مدیر سایت یا از آی.پی‌های بالا (جدا شده با کاما) قابل استفاده است. آی.پی فعلی شما: ' . IP::get(),
 			],
 		];
 	}

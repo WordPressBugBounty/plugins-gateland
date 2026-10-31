@@ -267,8 +267,8 @@ class ReceiptAPI extends RestAPI {
 
 		$accepted_amount = intval( $request->get_param( 'accepted_amount' ) );
 
-		if ( $accepted_amount == 0 ) {
-			self::response( false, 'مبلغ تایید شده نمی‌تواند صفر باشد.' );
+		if ( $accepted_amount <= 0 ) {
+			self::response( false, 'مبلغ تایید شده باید بزرگتر از صفر باشد.' );
 		}
 
 		$receipt->status          = 'accepted';

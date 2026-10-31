@@ -2,6 +2,7 @@
 
 use Nabik\Gateland\Enums\Transaction\CurrenciesEnum;
 use Nabik\Gateland\Helper;
+use Nabik\Gateland\Helpers\IP;
 use Nabik\Gateland\Models\Log;
 use Nabik\Gateland\Models\Transaction;
 
@@ -62,13 +63,14 @@ defined( 'ABSPATH' ) || exit;
 							</div>
 							<div class="flex flex-wrap gap-2 text-sm text-nowrap">
 								<div class="text-[#62748E]">آی.پی شما</div>
-								<div class="text-[#314158] font-medium mr-auto"><?php echo esc_html( Helper::fa_num( Helper::get_real_ip() ) ); ?></div>
+								<div class="text-[#314158] font-medium mr-auto"><?php echo esc_html( Helper::fa_num( IP::get() ) ); ?></div>
 							</div>
 						</div>
 						<div class="text-center mb-6">
 							<a href=""
 							   class="flex gap-2 items-center justify-center ms:text-base text-sm bg-primary-600 hover:bg-primary-700 rounded-xl text-white font-semibold py-3 px-5">
-								<img class="h-5" src="<?php echo esc_url( GATELAND_URL ); ?>/assets/images/icons/refresh-white.svg">
+								<img class="h-5"
+								     src="<?php echo esc_url( GATELAND_URL ); ?>/assets/images/icons/refresh-white.svg">
 								بررسی مجدد و تلاش دوباره
 							</a>
 						</div>
@@ -79,7 +81,8 @@ defined( 'ABSPATH' ) || exit;
 				</div>
 			</div>
 			<div class="text-center mt-8">
-				<a href="<?php echo esc_url( site_url() ); ?>" class="text-gray-600 font-semibold inline-flex gap-2 items-center">
+				<a href="<?php echo esc_url( home_url() ); ?>"
+				   class="text-gray-600 font-semibold inline-flex gap-2 items-center">
 					<img src="<?php echo esc_url( GATELAND_URL ); ?>/assets/images/icons/arrow-right-gray.svg">
 					رفتن به فروشگاه
 				</a>

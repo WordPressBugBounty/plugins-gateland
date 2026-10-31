@@ -664,6 +664,9 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .gateland-container .order-first {
   order: -9999;
 }
+.gateland-container .\!col-span-full {
+  grid-column: 1 / -1 !important;
+}
 .gateland-container .col-span-4 {
   grid-column: span 4 / span 4;
 }
@@ -672,9 +675,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 }
 .gateland-container .col-span-full {
   grid-column: 1 / -1;
-}
-.gateland-container .\!col-span-full {
-  grid-column: 1 / -1 !important;
 }
 .gateland-container .mx-1 {
   margin-left: 0.25rem;
@@ -738,9 +738,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 }
 .gateland-container .mb-6 {
   margin-bottom: 1.5rem;
-}
-.gateland-container .mb-7 {
-  margin-bottom: 1.75rem;
 }
 .gateland-container .mb-8 {
   margin-bottom: 2rem;
@@ -919,9 +916,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 }
 .gateland-container .h-4 {
   height: 1rem;
-}
-.gateland-container .h-40 {
-  height: 10rem;
 }
 .gateland-container .h-5 {
   height: 1.25rem;
@@ -1109,9 +1103,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .gateland-container .min-w-4 {
   min-width: 1rem;
 }
-.gateland-container .min-w-40 {
-  min-width: 10rem;
-}
 .gateland-container .min-w-48 {
   min-width: 12rem;
 }
@@ -1242,9 +1233,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .gateland-container .gap-y-4 {
   row-gap: 1rem;
 }
-.gateland-container .gap-y-6 {
-  row-gap: 1.5rem;
-}
 .gateland-container .space-y-2 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
@@ -1280,9 +1268,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 }
 .gateland-container .rounded-3xl {
   border-radius: 1.5rem;
-}
-.gateland-container .rounded-\[20px\] {
-  border-radius: 20px;
 }
 .gateland-container .rounded-\[8px\] {
   border-radius: 8px;
@@ -1631,9 +1616,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
-.gateland-container .bg-opacity-0 {
-  --tw-bg-opacity: 0;
-}
 .gateland-container .bg-opacity-20 {
   --tw-bg-opacity: 0.2;
 }
@@ -1802,9 +1784,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 }
 .gateland-container .pr-3 {
   padding-right: 0.75rem;
-}
-.gateland-container .pr-5 {
-  padding-right: 1.25rem;
 }
 .gateland-container .pr-6 {
   padding-right: 1.5rem;
@@ -2014,10 +1993,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .gateland-container .text-primary-700 {
   --tw-text-opacity: 1;
   color: rgb(0 57 117 / var(--tw-text-opacity, 1));
-}
-.gateland-container .text-primary-800 {
-  --tw-text-opacity: 1;
-  color: rgb(0 34 71 / var(--tw-text-opacity, 1));
 }
 .gateland-container .text-success-700 {
   --tw-text-opacity: 1;
@@ -2488,10 +2463,6 @@ body, html {
   background-color: rgb(3 152 85 / var(--tw-bg-opacity, 1));
 }
 
-.gateland-container .hover\:bg-opacity-20:hover {
-  --tw-bg-opacity: 0.2;
-}
-
 .gateland-container .hover\:bg-opacity-30:hover {
   --tw-bg-opacity: 0.3;
 }
@@ -2715,11 +2686,6 @@ body, html {
     font-size: 1rem;
     line-height: 1.5rem;
   }
-
-  .gateland-container .sm\:text-xl {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
-  }
 }
 
 @media (min-width: 768px) {
@@ -2802,30 +2768,12 @@ body, html {
     height: 3.5rem;
   }
 
-  .gateland-container .md\:size-9 {
-    width: 2.25rem;
-    height: 2.25rem;
-  }
-
-  .gateland-container .md\:size-\[70px\] {
-    width: 70px;
-    height: 70px;
-  }
-
   .gateland-container .md\:h-11 {
     height: 2.75rem;
   }
 
-  .gateland-container .md\:h-12 {
-    height: 3rem;
-  }
-
   .gateland-container .md\:h-5 {
     height: 1.25rem;
-  }
-
-  .gateland-container .md\:h-52 {
-    height: 13rem;
   }
 
   .gateland-container .md\:h-8 {
@@ -2882,22 +2830,6 @@ body, html {
 
   .gateland-container .md\:gap-6 {
     gap: 1.5rem;
-  }
-
-  .gateland-container .md\:gap-x-8 {
-    column-gap: 2rem;
-  }
-
-  .gateland-container .md\:space-y-4 > :not([hidden]) ~ :not([hidden]) {
-    --tw-space-y-reverse: 0;
-    margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
-    margin-bottom: calc(1rem * var(--tw-space-y-reverse));
-  }
-
-  .gateland-container .md\:space-y-6 > :not([hidden]) ~ :not([hidden]) {
-    --tw-space-y-reverse: 0;
-    margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
-    margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
   }
 
   .gateland-container .md\:overflow-hidden {
@@ -3126,10 +3058,6 @@ body, html {
     column-gap: 2.5rem;
   }
 
-  .gateland-container .lg\:gap-y-8 {
-    row-gap: 2rem;
-  }
-
   .gateland-container .lg\:rounded-2xl {
     border-radius: 1rem;
   }
@@ -3246,11 +3174,6 @@ body, html {
     padding-top: 1.75rem;
   }
 
-  .gateland-container .lg\:text-2xl {
-    font-size: 1.5rem;
-    line-height: 2rem;
-  }
-
   .gateland-container .lg\:text-\[24px\] {
     font-size: 24px;
   }
@@ -3295,12 +3218,8 @@ body, html {
     grid-column: span 6 / span 6;
   }
 
-  .gateland-container .xl\:\!col-span-full {
-    grid-column: 1 / -1 !important;
-  }
-
-  .gateland-container .xl\:col-span-full {
-    grid-column: 1 / -1;
+  .gateland-container .xl\:block {
+    display: block;
   }
 
   .gateland-container .xl\:w-\[calc\(120\%\+2px\)\] {

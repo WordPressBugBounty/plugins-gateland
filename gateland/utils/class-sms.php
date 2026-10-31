@@ -2,6 +2,9 @@
 
 namespace Nabik\Utils\V1;
 
+use Exception;
+use SoapClient;
+
 defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( '\Nabik\Utils\V1\SMS' ) ) {

@@ -179,7 +179,7 @@ class Gateway extends LP_Gateway_Abstract {
 			'lp_pay_method' => 'gateland',
 			'order_id'      => $order_id,
 			'secret'        => hash( 'crc32', $order_id . AUTH_KEY ),
-		], site_url() );
+		], home_url() );
 
 		$currency = learn_press_get_currency();
 		$amount   = $order->get_total();

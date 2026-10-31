@@ -51,6 +51,7 @@ class Gateway {
 		$callback = add_query_arg( [
 			'gateway'  => 'gateland',
 			'entry_id' => $entry_id,
+			'secret'   => hash( 'crc32', $entry_id . wp_salt() ),
 		], $entry['source_url'] );
 
 		$phone_field = $form['gateland_phone_field'] ?? null;
@@ -102,11 +103,19 @@ class Gateway {
 
 	public function verify() {
 
-		if ( ! isset( $_GET['gateway'], $_GET['entry_id'] ) ) {
+		if ( ! isset( $_GET['gateway'], $_GET['entry_id'], $_GET['secret'] ) ) {
+			return;
+		}
+
+		if ( $_GET['gateway'] !== 'gateland' ) {
 			return;
 		}
 
 		$entry_id = intval( $_GET['entry_id'] );
+
+		if ( ! hash_equals( hash( 'crc32', $entry_id . wp_salt() ), $_GET['secret'] ) ) {
+			wp_die( 'اجرای این درخواست به دلایل امنیتی امکان‌پذیر نیست.', '', [ 'response' => 403 ] );
+		}
 
 		$entry = GFAPI::get_entry( $entry_id );
 
@@ -128,7 +137,7 @@ class Gateway {
 
 			$status                       = 'Paid';
 			$entry['payment_date']        = Carbon::now()->format( 'Y-m-d H:i:s' );
-			$entry['payment_method']     = $response['data']['gateway'];
+			$entry['payment_method']      = $response['data']['gateway'];
 			$entry['gateway_trans_id']    = $response['data']['trans_id'];
 			$entry['payment_card_number'] = $response['data']['card_number'];
 			gform_update_meta( $entry_id, 'gateway_trans_id', $response['data']['trans_id'] );

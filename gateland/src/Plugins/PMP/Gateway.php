@@ -137,7 +137,7 @@ class PMProGateway_gateland extends PMProGateway {
 			'pmp_pay_method' => 'gateland',
 			'order_id'       => $order->id,
 			'secret'         => hash( 'crc32', $order->id . AUTH_KEY ),
-		], site_url() );
+		], home_url() );
 
 		$data = [
 			'amount'      => $amount,

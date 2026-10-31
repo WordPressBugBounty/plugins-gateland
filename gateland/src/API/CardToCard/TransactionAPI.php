@@ -81,7 +81,7 @@ class TransactionAPI extends RestAPI {
 			],
 			'site'                  => [
 				'name' => get_bloginfo( 'name' ),
-				'url'  => site_url(),
+				'url'  => home_url(),
 				'logo' => get_site_icon_url(),
 			],
 			'receipts'              => $receipts,

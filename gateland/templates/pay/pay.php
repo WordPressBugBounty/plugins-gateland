@@ -80,7 +80,7 @@ defined( 'ABSPATH' ) || exit;
 				</div>
 			</div>
 			<div class="text-center mt-8">
-				<a href="<?php echo esc_url( site_url() ); ?>"
+				<a href="<?php echo esc_url( home_url() ); ?>"
 				   class="text-gray-600 font-semibold inline-flex gap-2 items-center">
 					<img src="<?php echo esc_url( GATELAND_URL ); ?>/assets/images/icons/arrow-right-gray.svg">
 					رفتن به فروشگاه

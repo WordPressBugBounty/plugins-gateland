@@ -247,7 +247,7 @@ function gatelandPriceToNumber(price) {
     return Number(price.replace(/,/g, ''));
 }
 
-function gatelandConvertPriceToWords(amount) {
+function gatelandConvertPriceToWords(amount, currency= '') {
     if (isNaN(amount)) return 'عدد معتبر وارد کنید';
 
     if(amount > 100000000000){
@@ -321,7 +321,7 @@ function gatelandConvertPriceToWords(amount) {
     }
 
     let result = parts.join(' و ');
-    result += ' تومان';
+    result += ` ${currency} `;
 
     if (amount < 0) result = 'منفی ' + result;
     return result;

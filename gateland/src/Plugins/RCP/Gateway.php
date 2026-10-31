@@ -44,7 +44,7 @@ class Gateway extends \RCP_Payment_Gateway {
 		$callback = add_query_arg( [
 			'listener'   => 'gateland',
 			'payment_id' => $payment_id,
-		], site_url() );
+		], home_url() );
 
 		$data = [
 			'amount'      => $amount,

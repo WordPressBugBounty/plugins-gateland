@@ -115,7 +115,7 @@ class GatewayAPI extends RestAPI {
 			} )
 			->search( $class );
 
-		if ( ! $valid_class ) {
+		if ( $valid_class === false ) {
 			self::response( false, 'درگاه انتخاب شده معتبر نمی‌باشد.' );
 		}
 

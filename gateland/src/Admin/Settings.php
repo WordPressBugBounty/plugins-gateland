@@ -299,7 +299,7 @@ class Settings extends \Nabik\Utils\V1\Settings {
 									<b>مثال:</b> اگر مقدار این گزینه را <b>pay</b> قرار دهید، آدرس پرداخت تراکنش شبیه لینک روبرو خواهد بود:
 									%s/<b>pay</b>/%s
 								</p>',
-						site_url(),
+						home_url(),
 						SQID::encode( rand() )
 					),
 				],

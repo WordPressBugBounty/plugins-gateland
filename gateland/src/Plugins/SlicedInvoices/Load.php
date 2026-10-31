@@ -3,7 +3,7 @@
 namespace Nabik\Gateland\Plugins\SlicedInvoices;
 
 use Nabik\Gateland\Enums\Transaction\StatusesEnum;
-use Nabik\Gateland\Helper;
+use Nabik\Gateland\Helpers\IP;
 use Nabik\Gateland\Models\Transaction;
 use Nabik\Gateland\Pay;
 use Nabik\Gateland\Services\GatewayService;
@@ -57,20 +57,20 @@ class Load {
 		$description = sliced_get_invoice_label() . ' ' . sliced_get_invoice_prefix( $invoice_id ) . ' ' . sliced_get_invoice_number( $invoice_id ) . ' ' . sliced_get_invoice_suffix( $invoice_id );
 
 		$callback = add_query_arg( [
-			'gateway'    => 'gateland',
-			'invoice_id' => $invoice_id,
-			'hash'       => md5( $invoice_id . NONCE_SALT ),
+				'gateway'    => 'gateland',
+				'invoice_id' => $invoice_id,
+				'hash'       => md5( $invoice_id . NONCE_SALT ),
 		], $gateway['payment_page'] );
 
 		$data = [
-			'amount'      => sliced_get_invoice_total_due_raw( $invoice_id ) / 10, // always in IRR
-			'client'      => Transaction::CLIENT_SI,
-			'user_id'     => get_current_user_id(),
-			'order_id'    => $invoice_id,
-			'callback'    => $callback,
-			'description' => $description,
-			'currency'    => 'IRT',
-			'gateway_id'  => $gateway['id']
+				'amount'      => sliced_get_invoice_total_due_raw( $invoice_id ) / 10, // always in IRR
+				'client'      => Transaction::CLIENT_SI,
+				'user_id'     => get_current_user_id(),
+				'order_id'    => $invoice_id,
+				'callback'    => $callback,
+				'description' => $description,
+				'currency'    => 'IRT',
+				'gateway_id'  => $gateway['id'],
 		];
 
 		try {
@@ -132,24 +132,24 @@ class Load {
 
 			$status  = 'success';
 			$message = [
-				'<h2>موفق</h2>',
-				'پرداخت شما ثبت شد!',
-				sprintf( 'کد پیگیری پرداخت شما: %s', $authority )
+					'<h2>موفق</h2>',
+					'پرداخت شما ثبت شد!',
+					sprintf( 'کد پیگیری پرداخت شما: %s', $authority ),
 			];
 
 		} else {
 
 			$message = [
-				'<h2>ناموفق</h2>',
-				$response['message'] ?? 'پرداخت لغو شده، یا با خطا مواجه شده است.'
+					'<h2>ناموفق</h2>',
+					$response['message'] ?? 'پرداخت لغو شده، یا با خطا مواجه شده است.',
 			];
 
 		}
 
 		$message [] = sprintf(
-			'<a href="%s">جهت بازگشت به %s اینجا کلیک کنید</a></p>',
-			sliced_get_the_link( $invoice_id ),
-			sliced_get_invoice_label()
+				'<a href="%s">جهت بازگشت به %s اینجا کلیک کنید</a></p>',
+				sliced_get_the_link( $invoice_id ),
+				sliced_get_invoice_label()
 		);
 
 		$message = wpautop( implode( PHP_EOL, $message ) );
@@ -161,17 +161,17 @@ class Load {
 		}
 
 		$payments[] = [
-			'gateway'    => 'gateland',
-			'date'       => date( 'Y-m-d H:i:s' ),
-			'amount'     => Sliced_Shared::get_formatted_number( sliced_get_invoice_total_due_raw( $invoice_id ) ),
-			'currency'   => 'IRR',
-			'payment_id' => $authority,
-			'status'     => $status,
-			'memo'       => sprintf( 'درگاه: %s، شماره پیگیری: %s', $response['data']['gateway'] ?? '', $response['data']['trans_id'] ?? '' ),
-			'extra_data' => json_encode( [
-				'response' => $response,
-				'clientip' => Helper::get_real_ip(),
-			] ),
+				'gateway'    => 'gateland',
+				'date'       => date( 'Y-m-d H:i:s' ),
+				'amount'     => Sliced_Shared::get_formatted_number( sliced_get_invoice_total_due_raw( $invoice_id ) ),
+				'currency'   => 'IRR',
+				'payment_id' => $authority,
+				'status'     => $status,
+				'memo'       => sprintf( 'درگاه: %s، شماره پیگیری: %s', $response['data']['gateway'] ?? '', $response['data']['trans_id'] ?? '' ),
+				'extra_data' => json_encode( [
+						'response' => $response,
+						'clientip' => IP::get(),
+				] ),
 		];
 
 		update_post_meta( $invoice_id, '_sliced_payment', $payments );
@@ -232,7 +232,7 @@ class Load {
 	public function settings_fields( array $options ): array {
 
 		$gateways = [
-			0 => 'درگاه پرداخت هوشمند آنلاین',
+				0 => 'درگاه پرداخت هوشمند آنلاین',
 		];
 
 		foreach ( GatewayService::activated() as $gateway_id => $gateway ) {
@@ -240,22 +240,22 @@ class Load {
 		}
 
 		$options['fields'] = [
-			[
-				'name'       => 'فعالسازی',
-				'desc'       => '',
-				'type'       => 'checkbox',
-				'id'         => 'gateland_enabled',
-				'before_row' => [ $this, 'settings_group_before' ],
-			],
-			[
-				'name'      => 'درگاه پرداخت',
-				'desc'      => 'یکی از درگاه‌های پرداخت فعال را انتخاب کنید.',
-				'id'        => 'gateland_gateway',
-				'type'      => 'select',
-				'default'   => 0,
-				'options'   => $gateways,
-				'after_row' => [ $this, 'settings_group_after' ],
-			]
+				[
+						'name'       => 'فعالسازی',
+						'desc'       => '',
+						'type'       => 'checkbox',
+						'id'         => 'gateland_enabled',
+						'before_row' => [ $this, 'settings_group_before' ],
+				],
+				[
+						'name'      => 'درگاه پرداخت',
+						'desc'      => 'یکی از درگاه‌های پرداخت فعال را انتخاب کنید.',
+						'id'        => 'gateland_gateway',
+						'type'      => 'select',
+						'default'   => 0,
+						'options'   => $gateways,
+						'after_row' => [ $this, 'settings_group_after' ],
+				],
 		];
 
 		return $options;
@@ -304,9 +304,9 @@ class Load {
 		$payments = get_option( 'sliced_payments' );
 
 		return [
-			'id'           => ! empty( $payments['gateland_gateway'] ) ? $payments['gateland_gateway'] : null,
-			'enabled'      => $payments['gateland_enabled'] ?? 'off' === 'on',
-			'payment_page' => get_permalink( intval( $payments['payment_page'] ) )
+				'id'           => ! empty( $payments['gateland_gateway'] ) ? $payments['gateland_gateway'] : null,
+				'enabled'      => $payments['gateland_enabled'] ?? 'off' === 'on',
+				'payment_page' => get_permalink( intval( $payments['payment_page'] ) ),
 		];
 	}
 

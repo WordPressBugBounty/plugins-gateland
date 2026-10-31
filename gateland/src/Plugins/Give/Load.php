@@ -148,7 +148,7 @@ class Load {
 			'action'     => 'gateland_donate_give',
 			'payment_id' => $payment_id,
 			'secret'     => hash( 'crc32', $payment_id . AUTH_KEY ),
-		], site_url() );
+		], home_url() );
 
 		$data = [
 			'amount'      => $payment_data['price'],
